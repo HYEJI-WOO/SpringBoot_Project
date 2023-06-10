@@ -15,6 +15,7 @@
 <!-- 사용자 스크립트 추가 -->
 <th:block layout:fragment="script">
 
+    <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
     <script th:inline="javascript">
         $(document).ready(function(){
             var errorMessage = [[${errorMessage}]];
@@ -22,6 +23,36 @@
                 alert(errorMessage);
             }
         });
+
+        function searchAddress() {
+            new daum.Postcode({
+                oncomplete: function(data) {
+
+                    var roadAddress = data.roadAddress; // 도로명 주소 변수
+
+
+                    // 도로명 주소를 해당 필드에 적용
+                    document.getElementById('address1').value = roadAddress;
+                }
+            }).open();
+        }
+    </script>
+
+    <script th:inline="javascript">
+        function check_pwd(pwd_check) {
+            var password = document.getElementById('password').value;
+            var passwordCheck = document.getElementById('passwordCheck').value;
+
+            if (password !== passwordCheck) {
+                document.getElementById('pwd_check_msg').innerHTML = "<font color='red'>비밀번호가 일치하지 않습니다.</font>";
+            } else {
+                document.getElementById('pwd_check_msg').innerHTML = "<font color='blue'>비밀번호가 일치합니다.</font>";
+            }
+
+            if (pwd_check === "") {
+                document.getElementById('pwd_check_msg').innerHTML = "";
+            }
+        }
     </script>
 
 </th:block>
@@ -30,48 +61,50 @@
 
     <form action="/members/new" role="form" method="post"  th:object="${memberFormDto}">
         <div class="form-group">
-            <label th:for="email">이메일주소</label>
-            <input type="email" th:field="*{email}" class="form-control" placeholder="이메일을 입력해주세요">
+            <label th:for="email">이메일주소(필수)</label>
+            <input type="email" th:field="*{email}" id="email" class="form-control" placeholder="이메일을 입력해주세요">
             <p th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="fieldError">Incorrect data</p>
         </div>
         <div class="form-group">
-            <label th:for="password">비밀번호</label>
-            <input type="password" th:field="*{password}" class="form-control" placeholder="비밀번호 입력">
+            <label th:for="password">비밀번호(필수)</label>
+            <input type="password" th:field="*{password}" class="form-control" placeholder="비밀번호 입력" onkeyup="check_pwd(this.value)">
             <p th:if="${#fields.hasErrors('password')}" th:errors="*{password}" class="fieldError">Incorrect data</p>
         </div>
         <div class="form-group">
-            <label th:for="name">이름</label>
+            <label th:for="passwordCheck">비밀번호 확인(필수)</label>
+            <input type="password" th:field="*{passwordCheck}" class="form-control" placeholder="비밀번호 재입력" onkeyup="check_pwd(this.value)">
+            <p th:if="${#fields.hasErrors('passwordCheck')}" th:errors="*{passwordCheck}" class="fieldError">Incorrect data</p>
+            <span id="pwd_check_msg" style="text-align: center; display: block; margin: 0 auto;"></span>
+        </div>
+        <div class="form-group">
+            <label th:for="name">이름(필수)</label>
             <input type="text" th:field="*{name}" class="form-control" placeholder="이름을 입력해주세요">
             <p th:if="${#fields.hasErrors('name')}" th:errors="*{name}" class="fieldError">Incorrect data</p>
         </div>
         <div class="form-group">
-            <label th:for="address1">주소1</label>
-            <input type="text" th:field="*{address1}" class="form-control" placeholder="주소를 입력해주세요">
-            <p th:if="${#fields.hasErrors('address1')}" th:errors="*{address1}" class="fieldError">Incorrect data</p>
-        </div>
-        <div class="form-group">
-            <label th:for="address2">주소2</label>
-            <input type="text" th:field="*{address2}" class="form-control" placeholder="주소를 입력해주세요">
-            <p th:if="${#fields.hasErrors('address2')}" th:errors="*{address2}" class="fieldError">Incorrect data</p>
-        </div>
-        <div class="form-group">
-            <label th:for="phone">휴대폰번호</label>
+            <label th:for="phone">휴대폰번호(필수)</label>
             <input type="text" th:field="*{phone}" class="form-control" placeholder="휴대폰번호를 입력해주세요">
             <p th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}" class="fieldError">Incorrect data</p>
         </div>
         <div class="form-group">
             <label th:for="birthYear">년</label>
-            <input type="number" th:field="*{birthYear}" class="form-control">
+            <select th:field="*{birthYear}" class="form-control">
+                <option th:each="birthYear : ${#numbers.sequence(1920, 2023)}" th:value="${birthYear}" th:text="${birthYear}"></option>
+            </select>
             <p th:if="${#fields.hasErrors('birthYear')}" th:errors="*{birthYear}" class="fieldError">Incorrect data</p>
         </div>
         <div class="form-group">
             <label th:for="birthMonth">월</label>
-            <input type="number" th:field="*{birthMonth}" class="form-control">
+            <select th:field="*{birthMonth}" class="form-control">
+                <option th:each="birthMonth : ${#numbers.sequence(1, 12)}" th:value="${birthMonth}" th:text="${birthMonth}"></option>
+            </select>
             <p th:if="${#fields.hasErrors('birthMonth')}" th:errors="*{birthMonth}" class="fieldError">Incorrect data</p>
         </div>
         <div class="form-group">
             <label th:for="birthDay">일</label>
-            <input type="number" th:field="*{birthDay}" class="form-control">
+            <select th:field="*{birthDay}" class="form-control">
+                <option th:each="birthDay : ${#numbers.sequence(1, 31)}" th:value="${birthDay}" th:text="${birthDay}"></option>
+            </select>
             <p th:if="${#fields.hasErrors('birthDay')}" th:errors="*{birthDay}" class="fieldError">Incorrect data</p>
         </div>
         <div class="form-group">
@@ -82,8 +115,17 @@
             </select>
             <p th:if="${#fields.hasErrors('gender')}" th:errors="*{gender}" class="fieldError">Incorrect data</p>
         </div>
-
-
+        <div class="form-group">
+            <label th:for="address1">주소</label>
+            <input type="text" id="address1" class="form-control" placeholder="주소를 입력해주세요" th:field="*{address1}" disabled>
+            <button type="button" onclick="searchAddress()">주소 검색</button>
+            <p th:if="${#fields.hasErrors('address1')}" th:errors="*{address1}" class="fieldError">Incorrect data</p>
+        </div>
+        <div class="form-group">
+            <label th:for="address2">상세주소</label>
+            <input type="text" th:field="*{address2}" class="form-control" placeholder="주소를 입력해주세요">
+            <p th:if="${#fields.hasErrors('address2')}" th:errors="*{address2}" class="fieldError">Incorrect data</p>
+        </div>
 
         <div style="text-align: center">
             <button type="submit" class="btn btn-primary" style="">Submit</button>

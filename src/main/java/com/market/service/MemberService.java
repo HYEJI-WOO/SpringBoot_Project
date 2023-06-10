@@ -8,6 +8,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
@@ -43,4 +44,15 @@ public class MemberService implements UserDetailsService {
                 .roles(member.getRole().toString())
                 .build();
     }
+
+    public Member getMemberByUsername(String username) {
+        return memberRepository.findByEmail(username);
+    }
+
+    // 멤버 업데이트
+    public void update(Member member) {
+        memberRepository.save(member);
+    }
+
+
 }

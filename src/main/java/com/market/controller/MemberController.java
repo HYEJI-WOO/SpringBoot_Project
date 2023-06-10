@@ -8,11 +8,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.security.Principal;
 
 @RequestMapping("/members")
 @Controller
@@ -48,13 +47,38 @@ public class MemberController {
 
     @GetMapping(value = "/login")
     public String loginMember() {
-        return "/member/memberLoginForm";
+        return "member/memberLoginForm";
     }
 
     @GetMapping(value = "/login/error")
     public String loginError(Model model) {
         model.addAttribute("loginErrorMsg", "아이디 또는 비밀번호를 확인해주세요.");
-        return "/member/memberLoginForm";
+        return "member/memberLoginForm";
     }
 
+    @GetMapping(value = "/myPage")
+    public String myPage(Model model, Principal principal) {
+        String username = principal.getName();
+        Member member = memberService.getMemberByUsername(username);
+        model.addAttribute("info", member);
+        return "member/myPage";
+    }
+
+    @PostMapping(value = "/modify")
+    public String modify(@ModelAttribute MemberFormDto memberFormDto, Principal principal, Model model) {
+        String username = principal.getName();
+        Member member = memberService.getMemberByUsername(username);
+        member.setPhone(memberFormDto.getPhone());
+        member.setGender(memberFormDto.getGender());
+        member.setBirthDay(memberFormDto.getBirthDay());
+        member.setBirthMonth(memberFormDto.getBirthMonth());
+        member.setBirthYear(memberFormDto.getBirthYear());
+        member.setAddress1(memberFormDto.getAddress1());
+        member.setAddress2(memberFormDto.getAddress2());
+
+        memberService.update(member);
+        model.addAttribute("info", member);
+
+        return "member/myPage";
+    }
 }
