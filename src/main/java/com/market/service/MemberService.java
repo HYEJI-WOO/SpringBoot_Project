@@ -1,5 +1,6 @@
 package com.market.service;
 
+import com.market.dto.MemberFormDto;
 import com.market.entity.Member;
 import com.market.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -55,4 +56,13 @@ public class MemberService implements UserDetailsService {
     }
 
 
+    public String findInfo(MemberFormDto dto) {
+        Member member = memberRepository.findByNameAndPhone(dto.getName(), dto.getPhone());
+
+        if (member != null) {
+            return "true";
+        } else {
+            return "false";
+        }
+    }
 }

@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout1}">
+
+
+<div layout:fragment="content">
+    <h1>아이디 확인</h1>
+    <input type="text" th:value="${id}">
+    <a href="/members/login" class="btn btn-primary">로그인</a>
+</div>
+
+</html>

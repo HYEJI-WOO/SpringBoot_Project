@@ -23,6 +23,11 @@
       <label th:for="password">비밀번호</label>
       <input type="password" name="password" id="password" class="form-control" placeholder="비밀번호 입력">
     </div>
+    <div class="forgot-links" style="position: absolute; right: 41.5%; font-size: 15px;">
+      <a th:href="@{/members/findId}">아이디 찾기</a>
+      <span>|</span>
+      <a th:href="@{/members/findPwd}">비밀번호 찾기</a>
+    </div>
     <p th:if="${loginErrorMsg}" class="error" th:text="${loginErrorMsg}"></p>
     <button class="btn btn-primary">로그인</button>
     <button type="button" class="btn btn-primary" onClick="location.href='/members/new'">회원가입</button>

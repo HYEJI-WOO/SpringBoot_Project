@@ -66,4 +66,22 @@ class MemberServiceTest {
         assertEquals("이미 가입된 회원입니다.", e.getMessage());
     }
 
+    @Test
+    @DisplayName("회원 정보 수정 테스트")
+    public void updateMemberTest() {
+        // Given
+        Member member = createMember();
+        Member savedMember = memberService.saveMember(member);
+
+        // When
+        savedMember.setName("이순신");
+        savedMember.setPhone("01098765432");
+        memberService.update(savedMember);
+
+        // Then
+        Member updatedMember = memberService.getMemberByUsername(savedMember.getEmail());
+        assertEquals(savedMember.getName(), updatedMember.getName());
+        assertEquals(savedMember.getPhone(), updatedMember.getPhone());
+    }
+
 }

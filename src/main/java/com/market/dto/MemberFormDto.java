@@ -1,6 +1,7 @@
 package com.market.dto;
 
 import com.market.constant.Gender;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.validator.constraints.Length;
