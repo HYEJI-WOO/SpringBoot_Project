@@ -31,13 +31,10 @@ public class MemberFormDto {
     @Pattern(regexp = "\\d{10,11}", message = "휴대폰 번호는 10자리 또는 11자리의 숫자로 입력해주세요.")
     private String phone; // 휴대폰 번호
 
-    @NotNull(message = "년은 필수 입력 값입니다.")
     private Integer birthYear; // 년
 
-    @NotNull(message = "월은 필수 입력 값입니다.")
     private Integer birthMonth; // 월
 
-    @NotNull(message = "일은 필수 입력 값입니다.")
     private Integer birthDay; // 일
 
     private Gender gender; // 성별

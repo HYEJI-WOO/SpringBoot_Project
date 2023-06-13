@@ -9,6 +9,8 @@ import lombok.ToString;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
+import java.util.Date;
 
 @Entity
 @Table(name="member")
@@ -47,7 +49,11 @@ public class Member {
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    private LocalDateTime regDate;
+
     public static Member createMember(MemberFormDto memberFormDto, PasswordEncoder passwordEncoder){
+
+        memberFormDto.setRegDate(LocalDateTime.now());
 
         Member member = new Member();
         member.setName(memberFormDto.getName());
@@ -59,6 +65,7 @@ public class Member {
         member.setBirthMonth(memberFormDto.getBirthMonth());
         member.setBirthDay(memberFormDto.getBirthDay());
         member.setGender(memberFormDto.getGender());
+        member.setRegDate(memberFormDto.getRegDate());
 
         String password = passwordEncoder.encode(memberFormDto.getPassword());
         member.setPassword(password);

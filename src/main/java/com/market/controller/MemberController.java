@@ -56,6 +56,19 @@ public class MemberController {
         return "redirect:/";
     }
 
+    @PostMapping(value = "/findInfo")
+    @ResponseBody
+    public String findInfo(@RequestParam String email) {
+        Member member = memberRepository.findByEmail(email);
+        Gson gson = new Gson();
+
+        if (member != null) {
+            return gson.toJson(true);
+        } else {
+            return gson.toJson(false);
+        }
+    }
+
     @GetMapping(value = "/login")
     public String loginMember() {
         return "member/memberLoginForm";
@@ -152,8 +165,8 @@ public class MemberController {
 //        properties.put("mail.smtp.auth", "true"); // 인증 사용
 //
 //        // 구글 계정 정보
-//        String username = "whj1939@gmail.com";
-//        String password = "fgkzeryvfadbmsqi";
+//        String username = "zzzz@gmail.com";
+//        String password = "zzzz";
 //
 //        // 인증 정보
 //        Authenticator authenticator = new Authenticator() {
@@ -193,10 +206,13 @@ public class MemberController {
     }
 
     @PostMapping("/pwdChange")
-    public String pwdChange(@RequestParam String id, @RequestParam String password, BindingResult bindingResult, Model model) {
-        System.out.println(id);
-        System.out.println(password);
-        return "member/login";
+    public String pwdChange(@ModelAttribute MemberFormDto memberFormDto, BindingResult bindingResult) {
+        String id = memberFormDto.getEmail();
+        String password = memberFormDto.getPassword();
+        Member member = memberService.getMemberByUsername(id);
+        member.setPassword(passwordEncoder.encode(password));
+        memberService.update(member);
+        return "member/memberLoginForm";
     }
 
     @GetMapping(value = "/myPage")

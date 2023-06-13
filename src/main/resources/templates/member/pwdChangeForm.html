@@ -2,49 +2,44 @@
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layouts/layout1}">
-
 <th:block layout:fragment="script">
-<script th:inline="javascript">
-    document.addEventListener('DOMContentLoaded', function() {
-        var changePwdForm = document.getElementById('changePwdForm');
+    <script th:inline="javascript">
 
-        var submitHandler = function(event) {
-            var password = document.getElementById('password').value;
-            var passwordCheck = document.getElementById('passwordCheck').value;
 
-            if (password !== passwordCheck) {
-                event.preventDefault();
-                alert('비밀번호가 일치하지 않습니다.');
-                document.getElementById('password').value = '';
-                document.getElementById('passwordCheck').value = '';
+function submitForm(event) {
+    event.preventDefault(); // 이벤트 기본 동작(폼 전송)을 막습니다.
 
-                // 이벤트 리스너 제거
-                changePwdForm.removeEventListener('submit', submitHandler);
-            }
-        };
+    var password = $('#password').val();
+    var passwordCheck = $('#passwordCheck').val();
 
-        changePwdForm.addEventListener('submit', submitHandler);
-    });
+    if (password === passwordCheck) {
+        alert('비밀번호가 변경되었습니다.');
+        event.target.submit(); // 비밀번호가 일치하면 폼을 전송합니다.
+    } else {
+        alert('비밀번호가 일치하지 않습니다.');
+        $('#password').val("");
+        $('#passwordCheck').val("");
+    }
+}
 
 </script>
-
-
 </th:block>
 
 <div layout:fragment="content">
     <h1>비밀번호 변경</h1>
-    <form action="/members/pwdChange" method="post">
+    <form action="/members/pwdChange" method="post" onsubmit="submitForm(event)">
         <div class="form-group">
             <label th:for="password">비밀번호(필수)</label>
-            <input type="password" id="password" name="password" class="form-control" placeholder="비밀번호 입력" onkeyup="check_pwd(this.value)" maxlength="16" minlength="8">
+            <input type="password" id="password" name="password" class="form-control" placeholder="비밀번호 입력" maxlength="16" minlength="8">
 
         </div>
         <div class="form-group">
             <label th:for="passwordCheck">비밀번호 확인(필수)</label>
-            <input type="password" id="passwordCheck" name="passwordCheck" class="form-control" placeholder="비밀번호 재입력" onkeyup="check_pwd(this.value)" maxlength="16" minlength="8">
+            <input type="password" id="passwordCheck" name="passwordCheck" class="form-control" placeholder="비밀번호 재입력" maxlength="16" minlength="8">
             <span id="pwd_check_msg" style="text-align: center; display: block; margin: 0 auto;"></span>
         </div>
-        <input type="hidden" id="id" name="id" th:value="${id}">
+        <input type="hidden" id="email" name="email" th:value="${id}">
+        <input type="hidden" name="_csrf" th:value="${_csrf.token}">
         <button type="submit" class="btn btn-primary">비밀번호 변경</button>
     </form>
 </div>
