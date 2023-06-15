@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout1}">
+
+<div layout:fragment="content">
+    <div class="container my-3">
+        <h1 style="margin-top: 5%; text-align: center;">Q&A</h1>
+        <a th:href="@{/inquiry/create}" class="btn boardWrite" style="float: right; margin-right: 0px;">Write</a>
+        <br><br>
+        <form id="listForm">
+
+            <table class="table">
+                <tr>
+                    <th>번호</th>
+                    <th>문의유형</th>
+                    <th>제목</th>
+                    <th>작성자</th>
+                    <th>작성일</th>
+                    <th>답변여부</th>
+                </tr>
+                <tr th:each="inquiry : ${inquiries}">
+                    <td th:text="${inquiry.id}"></td>
+                    <td th:text="${inquiry.inquiryType == T(com.market.constant.InquiryType).PAYMENT ? '결제 문의' :
+                       (inquiry.inquiryType == T(com.market.constant.InquiryType).SHIPPING ? '배송 문의' :
+                       (inquiry.inquiryType == T(com.market.constant.InquiryType).PRODUCT ? '상품 문의' : '기타 문의'))}"></td>
+                    <td><a th:href="@{${'/inquiry/' + inquiry.id}}"><span th:text="${inquiry.title}"></span></a></td>
+                    <td th:text="${inquiry.writer}"></td>
+                    <td th:text="${inquiry.regDate}"></td>
+                    <td th:text="${inquiry.answer != null ? '답변 완료' : '미답변'}"></td>
+                </tr>
+
+            </table>
+        </form>
+        <!--        <ul class="pagination d-flex justify-content-center">-->
+        <!--            <li th:if="${p.prev}" class="page-item"><a class="page-link" th:href="@{(${p.startPage-1})}">Previous</a></li>-->
+        <!--            <li th:each="pageBtn : ${#numbers.sequence(p.startPage, p.endPage)}"-->
+        <!--                class="page-item" th:classappend="${pageBtn==param.pageNum or (pageBtn==1 and param.pageNum==null) ? 'active' : ''}">-->
+        <!--                <a class="page-link" th:href="@{${pageBtn}}" th:text="${pageBtn}"></a>-->
+        <!--            </li>-->
+        <!--            <li th:if="${p.next}" class="page-item"><a class="page-link" th:href="@{(${p.endPage+1})}">Next</a></li>-->
+        <!--        </ul>-->
+    </div>
+</div>
+
+</html>

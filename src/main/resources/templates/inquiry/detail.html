@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout1}">
+
+<div layout:fragment="content">
+    <div class="container my-3">
+        <h1 style="margin-top: 5%; text-align: center;">Q&A 상세</h1>
+        <table class="table">
+            <tr>
+                <th>번호</th>
+                <th>문의유형</th>
+                <th>제목</th>
+                <th>작성자</th>
+                <th>작성일</th>
+                <th>문의내용</th>
+            </tr>
+            <tr>
+                <td th:text="${inquiry.id}"></td>
+                <td th:text="${inquiry.inquiryType == T(com.market.constant.InquiryType).PAYMENT ? '결제 문의' :
+                       (inquiry.inquiryType == T(com.market.constant.InquiryType).SHIPPING ? '배송 문의' :
+                       (inquiry.inquiryType == T(com.market.constant.InquiryType).PRODUCT ? '상품 문의' : '기타 문의'))}"></td>
+                <td th:text="${inquiry.title}"></td>
+                <td th:text="${inquiry.writer}"></td>
+                <td th:text="${inquiry.regDate}"></td>
+                <td th:text="${inquiry.content}"></td>
+
+            </tr>
+        </table>
+    </div>
+</div>
+
+</html>

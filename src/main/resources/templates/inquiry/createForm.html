@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout1}">
+
+<th:block layout:fragment="css">
+    <style>
+    .fieldError {
+        color: #bd2130;
+    }
+</style>
+</th:block>
+
+<th:block layout:fragment="script">
+<script th:inline="javascript">
+
+var photoCount = 1; // 초기 사진 개수 (1부터 시작)
+var maxPhotos = 5; // 최대 사진 개수
+
+function addPhotoField() {
+    if (photoCount <= maxPhotos) {
+        var additionalPhotosDiv = document.getElementById("additional-photos");
+
+        var newPhotoField = document.createElement("div");
+        newPhotoField.classList.add("form-group");
+
+        var label = document.createElement("label");
+        label.textContent = "사진" + photoCount;
+
+        var input = document.createElement("input");
+        input.type = "file";
+        input.classList.add("form-control");
+        input.name = "photo" + photoCount;
+        input.multiple = true;
+
+        var deleteButton = document.createElement("button");
+        deleteButton.type = "button";
+        deleteButton.classList.add("btn", "btn-danger", "btn-sm");
+        deleteButton.textContent = "삭제";
+        deleteButton.addEventListener("click", function() {
+            removePhotoField(newPhotoField);
+        });
+
+        newPhotoField.appendChild(label);
+        newPhotoField.appendChild(input);
+        newPhotoField.appendChild(deleteButton);
+
+        additionalPhotosDiv.appendChild(newPhotoField);
+
+        photoCount++;
+    } else {
+        alert("최대 " + maxPhotos + "장의 사진을 첨부할 수 있습니다.");
+    }
+}
+
+function removePhotoField(field) {
+    field.remove();
+    photoCount--;
+
+    // Update labels of remaining photo fields
+    var photoFields = document.querySelectorAll('#additional-photos .form-group');
+    for (var i = 0; i < photoFields.length; i++) {
+        var label = photoFields[i].querySelector('label');
+        label.textContent = '사진' + (i + 1);
+    }
+}
+</script>
+</th:block>
+
+
+<div layout:fragment="content">
+    <form th:action="@{/inquiry/create}" method="post" th:object="${inquiryDto}" enctype="multipart/form-data">
+        <div class="form-group">
+            <label for="inquiryType">문의 유형</label>
+            <select class="form-control" id="inquiryType" name="inquiryType">
+                <option value="PRODUCT">상품 문의</option>
+                <option value="SHIPPING">배송 문의</option>
+                <option value="PAYMENT">결제 문의</option>
+                <option value="OTHER">기타 문의</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="title">제목</label>
+            <input type="text" th:field="*{title}" id="title" name="title" class="form-control" placeholder="제목을 입력해주세요" required>
+        </div>
+        <div class="form-group">
+            <label for="content">내용</label>
+            <textarea class="form-control" th:field="*{content}" id="content" name="content" placeholder="내용을 입력해주세요" required></textarea>
+        </div>
+        <div id="additional-photos">
+            <!-- 추가 사진 입력 필드가 동적으로 생성될 위치 -->
+        </div>
+        <div>
+            <button type="button" class="btn btn-secondary" onclick="addPhotoField()">사진 추가</button>
+        </div>
+        <div class="form-group">
+            <label for="writer">작성자</label>
+            <input type="text" class="form-control" id="writer" name="writer" th:value="${userId}" readonly>
+        </div>
+        <button type="submit" class="btn btn-primary">작성</button>
+    </form>
+</div>
+
+</html>
