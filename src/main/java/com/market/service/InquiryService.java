@@ -33,6 +33,16 @@ public class InquiryService {
                 .orElseThrow(() -> new RuntimeException("Inquiry not found"));
     }
 
+    public void update(Inquiry inquiry) {
+        inquiryRepository.save(inquiry);
+    }
+
+//    public void deleteInquiry(Long inquiryId) {
+//        // 문의 삭제 또는 상태 변경 등의 작업을 수행합니다.
+//        inquiryRepository.delete(inquiryId);
+//
+//    }
+
 //    public Page<Inquiry> getInquiriesByCategory(String category, Pageable pageable) {
 //        return inquiryRepository.findByCategory(category, pageable);
 //    }

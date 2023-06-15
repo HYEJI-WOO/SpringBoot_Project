@@ -79,11 +79,37 @@ public class InquiryController {
     }
 
     @GetMapping(value = "/{id}")
-    public String getInquiry(@PathVariable("id") Long inquiryId, Model model) {
+    public String getInquiry(@PathVariable("id") Long inquiryId, Model model, Principal principal) {
+        String username = principal.getName();
         Inquiry inquiry = inquiryService.getInquiryById(inquiryId);
         model.addAttribute("inquiry", inquiry);
+        model.addAttribute("username", username);
         return "inquiry/detail";
     }
+
+    @PostMapping(value = "/modify")
+    public String modify(@ModelAttribute InquiryDto inquiryDto, @RequestParam Long inquiryId) {
+        Inquiry inquiry = inquiryService.getInquiryById(inquiryId);
+        inquiry.setTitle(inquiryDto.getTitle());
+        inquiry.setContent(inquiryDto.getContent());
+        inquiryService.update(inquiry);
+
+        return "redirect:/inquiry/list";
+    }
+
+    @PostMapping("/delete")
+    public String delete(@RequestParam("inquiryId") String inquiryId) {
+        Long convertedId = Long.parseLong(inquiryId);
+
+        System.out.println("======================");
+        System.out.println(inquiryId);
+        System.out.println("======================");
+        // 문의 삭제 로직을 구현합니다.
+
+        // 삭제 후 어떤 페이지로 이동할지 리다이렉트 경로를 반환합니다.
+        return "redirect:/inquiry/list";
+    }
+
 
 
 
