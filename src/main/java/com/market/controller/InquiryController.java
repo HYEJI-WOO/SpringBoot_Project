@@ -1,6 +1,8 @@
 package com.market.controller;
 
+import com.google.gson.Gson;
 import com.market.dto.InquiryDto;
+import com.market.dto.ItemFormDto;
 import com.market.dto.MemberFormDto;
 import com.market.entity.Inquiry;
 import com.market.entity.Member;
@@ -15,6 +17,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import java.security.Principal;
@@ -68,6 +71,7 @@ public class InquiryController {
     @PostMapping(value = "/create")
     public String createInquiry(@Valid InquiryDto inquiryDto, Model model) {
         String email = inquiryDto.getWriter();
+
         Member member = memberRepository.findByEmail(email);
         Long memberId = member.getId();
         inquiryDto.setMemberId(memberId);
@@ -77,6 +81,41 @@ public class InquiryController {
 
         return "redirect:/inquiry/list";
     }
+
+//    @PostMapping(value = "/create")
+//    public String createInquiry(@Valid InquiryDto inquiryDto, BindingResult bindingResult, Model model, @RequestParam("inquiryImgFile")List<MultipartFile> inquiryImgFileList) {
+//        String email = inquiryDto.getWriter();
+//
+//        Member member = memberRepository.findByEmail(email);
+//        Long memberId = member.getId();
+//        inquiryDto.setMemberId(memberId);
+//        System.out.println(memberId);
+//        Inquiry inquiry = Inquiry.createInquiry(inquiryDto);
+//        inquiryService.saveInquiry(inquiry);
+//
+//        return "redirect:/inquiry/list";
+//    }
+
+//    @PostMapping(value = "/admin/item/new")
+//    public String itemNew(@Valid ItemFormDto itemFormDto, BindingResult bindingResult, Model model, @RequestParam("itemImgFile")List<MultipartFile> itemImgFileList){
+//
+//        if(bindingResult.hasErrors()){
+//            return "item/itemForm";
+//        }
+//
+//        if(itemImgFileList.get(0).isEmpty() && itemFormDto.getId() == null){
+//            model.addAttribute("errorMessage", "첫번째 상품 이미지는 필수 값 입니다.");
+//            return "item/itemForm";
+//        }
+//
+//        try{
+//            itemService.saveItem(itemFormDto, itemImgFileList);
+//        } catch (Exception e){
+//            model.addAttribute("errorMessage", "상품 등록 중 에러가 발생하였습니다.");
+//            return "item/itemForm";
+//        }
+//        return "redirect:/";
+//    }
 
     @GetMapping(value = "/{id}")
     public String getInquiry(@PathVariable("id") Long inquiryId, Model model, Principal principal) {
@@ -97,19 +136,15 @@ public class InquiryController {
         return "redirect:/inquiry/list";
     }
 
-    @PostMapping("/delete")
-    public String delete(@RequestParam("inquiryId") String inquiryId) {
-        Long convertedId = Long.parseLong(inquiryId);
-
-        System.out.println("======================");
+    @DeleteMapping(value = "/delete/{id}")
+    @ResponseBody
+    public String delete(@PathVariable("id") Long inquiryId) {
         System.out.println(inquiryId);
-        System.out.println("======================");
-        // 문의 삭제 로직을 구현합니다.
+        inquiryService.deleteInquiry(inquiryId);
 
-        // 삭제 후 어떤 페이지로 이동할지 리다이렉트 경로를 반환합니다.
-        return "redirect:/inquiry/list";
+        Gson gson = new Gson();
+        return gson.toJson(true);
     }
-
 
 
 

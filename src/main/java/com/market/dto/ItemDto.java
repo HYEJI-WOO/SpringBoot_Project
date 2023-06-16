@@ -9,6 +9,8 @@ import java.time.LocalDateTime;
 @Setter
 public class ItemDto {
 
+    private Long id;
+
     private String itemNm;
 
     private Integer price;

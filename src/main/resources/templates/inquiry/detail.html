@@ -2,11 +2,35 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layouts/layout1}">
+
+<head>
+    <meta name="_csrf" th:content="${_csrf.token}" />
+    <meta name="_csrf_header" th:content="${_csrf.headerName}" />
+</head>
+
 <th:block layout:fragment="script">
 
     <script th:inline="javascript">
+
+    $(document).ready(function(){
+        var loggedInUser = document.getElementById("username").value;
+        var writer = document.getElementById("writer").value;
+
+        if (loggedInUser === writer) {
+            document.getElementById("modifyBtn").style.display = "inline-block";
+            document.getElementById("deleteBtn").style.display = "inline-block";
+        } else {
+            document.getElementById("modifyBtn").style.display = "none";
+            document.getElementById("deleteBtn").style.display = "none";
+        };
+    });
+
         var title;
         var content;
+
+        function gohome(event) {
+            window.location.href = "/inquiry/list";
+        }
 
         function modify(event) {
 
@@ -44,12 +68,31 @@
         }
 
         function deleteInquiry(event) {
-            event.preventDefault();
-            var inquiryId = document.getElementById("inquiryId").value;
-            window.location.href = "/inquiry/delete?inquiryId=" + encodeURIComponent(parseInt(inquiryId));
+          event.preventDefault();
+          var inquiryId = document.getElementById("inquiryId").value;
+
+          var csrfToken = $("meta[name='_csrf']").attr("content");
+          var csrfHeader = $("meta[name='_csrf_header']").attr("content");
+
+          // 삭제 확인 메시지 표시
+          var confirmDelete = confirm("삭제하시겠습니까?");
+          if (confirmDelete) {
+            $.ajax({
+              url: "/inquiry/delete/" + encodeURIComponent(parseInt(inquiryId)),
+              type: "DELETE",
+              beforeSend: function(xhr) {
+                xhr.setRequestHeader(csrfHeader, csrfToken);
+              },
+              success: function(response) {
+                alert('삭제되었습니다.');
+                window.location.href = "/inquiry/list";
+              },
+              error: function(error) {
+                console.log('실패');
+              }
+            });
+          }
         }
-
-
     </script>
 
 </th:block>
@@ -60,14 +103,11 @@
             <div class="card">
                 <h1>Q&amp;A 상세</h1>
 
+                <input type="hidden" th:value="${username}" id="username" name="username">
+
                 <div class="form-group">
                     <h5>문의 번호:</h5>
                     <input type="text" th:value="${inquiry.id}" id="inquiryId" name="inquiryId" class="form-control" readonly>
-                </div>
-
-                <div class="form-group">
-                    <h5>문의 제목:</h5>
-                    <input type="text" th:value="${inquiry.title}" id="title" name="title" class="form-control" disabled>
                 </div>
 
                 <div class="form-group">
@@ -88,9 +128,15 @@
                 </div>
 
                 <div class="form-group">
+                    <h5>문의 제목:</h5>
+                    <input type="text" th:value="${inquiry.title}" id="title" name="title" class="form-control" disabled>
+                </div>
+
+                <div class="form-group">
                     <h5>문의 내용:</h5>
                     <textarea class="form-control" th:text="${inquiry.content}" id="content" name="content" disabled></textarea>
                 </div>
+
             </div>
 
             <div style="text-align: center">

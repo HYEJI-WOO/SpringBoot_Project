@@ -37,11 +37,10 @@ public class InquiryService {
         inquiryRepository.save(inquiry);
     }
 
-//    public void deleteInquiry(Long inquiryId) {
-//        // 문의 삭제 또는 상태 변경 등의 작업을 수행합니다.
-//        inquiryRepository.delete(inquiryId);
-//
-//    }
+    public void deleteInquiry(Long inquiryId) {
+        inquiryRepository.deleteById(inquiryId);
+    }
+
 
 //    public Page<Inquiry> getInquiriesByCategory(String category, Pageable pageable) {
 //        return inquiryRepository.findByCategory(category, pageable);

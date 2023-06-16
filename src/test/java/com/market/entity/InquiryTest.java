@@ -40,27 +40,27 @@ public class InquiryTest {
         inquiry.setAnswer(answer);
 
         // Create photos
-        List<InquiryPhoto> photos = new ArrayList<>();
+        List<InquiryImg> imgs = new ArrayList<>();
 
-        InquiryPhoto photo1 = new InquiryPhoto();
-        photo1.setFilePath("/path/to/photo1.jpg");
-        photo1.setInquiry(inquiry);
-        photos.add(photo1);
+        InquiryImg img1 = new InquiryImg();
+        img1.setImgUrl("/path/to/img1.jpg");
+        img1.setInquiry(inquiry);
+        imgs.add(img1);
 
-        InquiryPhoto photo2 = new InquiryPhoto();
-        photo2.setFilePath("/path/to/photo2.jpg");
-        photo2.setInquiry(inquiry);
-        photos.add(photo2);
+        InquiryImg img2 = new InquiryImg();
+        img1.setImgUrl("/path/to/img2.jpg");
+        img2.setInquiry(inquiry);
+        imgs.add(img2);
 
         // Associate the photos with the inquiry
-        inquiry.setPhotos(photos);
+        inquiry.setImgs(imgs);
 
         // Verify the associations
         Assertions.assertEquals(answer, inquiry.getAnswer());
         Assertions.assertEquals(inquiry, answer.getInquiry());
-        Assertions.assertEquals(2, inquiry.getPhotos().size());
-        Assertions.assertTrue(inquiry.getPhotos().contains(photo1));
-        Assertions.assertTrue(inquiry.getPhotos().contains(photo2));
+        Assertions.assertEquals(2, inquiry.getImgs().size());
+        Assertions.assertTrue(inquiry.getImgs().contains(img1));
+        Assertions.assertTrue(inquiry.getImgs().contains(img2));
         Assertions.assertEquals(member, inquiry.getMember());
     }
 }

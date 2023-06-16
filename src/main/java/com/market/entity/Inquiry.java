@@ -30,6 +30,7 @@ public class Inquiry {
     private String title;
 
     @Lob
+    @Column(nullable = false)
     private String content;
 
     private String writer;
@@ -43,7 +44,7 @@ public class Inquiry {
     private InquiryStatus status;
 
     @OneToMany(mappedBy = "inquiry", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<InquiryPhoto> photos;
+    private List<InquiryImg> imgs;
 
     @OneToOne(mappedBy = "inquiry", cascade = CascadeType.ALL, orphanRemoval = true)
     private Answer answer;
@@ -58,7 +59,7 @@ public class Inquiry {
         inquiry.setContent(inquiryDto.getContent());
         inquiry.setWriter(inquiryDto.getWriter());
         inquiry.setInquiryType(inquiryDto.getInquiryType());
-        inquiry.setPhotos(inquiryDto.getPhotos());
+        inquiry.setImgs(inquiryDto.getImgs());
         inquiry.setRegDate(LocalDateTime.now());
         inquiry.setStatus(InquiryStatus.PENDING);
 
