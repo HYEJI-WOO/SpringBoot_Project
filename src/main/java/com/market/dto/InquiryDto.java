@@ -12,13 +12,22 @@ import java.util.List;
 @Getter
 @Setter
 public class InquiryDto {
+
     private Long memberId;
+
     private String title;
+
     private String content;
+
     private String writer;
+
     private LocalDateTime regDate;
+
     private InquiryType inquiryType;
+
     private InquiryStatus status;
+
     private List<InquiryImg> imgs;
+
     private Answer answer;
 }

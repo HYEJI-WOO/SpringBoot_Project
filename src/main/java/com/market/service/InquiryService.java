@@ -1,7 +1,9 @@
 package com.market.service;
 
-import com.market.entity.Inquiry;
-import com.market.entity.Member;
+import com.market.constant.InquiryStatus;
+import com.market.dto.InquiryFormDto;
+import com.market.entity.*;
+import com.market.repository.InquiryImgRepository;
 import com.market.repository.InquiryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -9,7 +11,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -18,9 +22,27 @@ import java.util.List;
 public class InquiryService {
 
     private final InquiryRepository inquiryRepository;
+    private final InquiryImgService inquiryImgService;
+    private final InquiryImgRepository inquiryImgRepository;
 
-    public Inquiry saveInquiry(Inquiry inquiry) {
-        return inquiryRepository.save(inquiry);
+    public Long saveInquiry(InquiryFormDto inquiryFormDto, List<MultipartFile> inquiryImgFileList) throws Exception{
+
+        inquiryFormDto.setRegDate(LocalDateTime.now());
+
+        Inquiry inquiry = inquiryFormDto.createInquiry();
+        inquiry.setStatus(InquiryStatus.PENDING);
+        inquiry.setRegDate(inquiryFormDto.getRegDate());
+        inquiryRepository.save(inquiry);
+
+        //이미지 등록
+        for(int i=0;i<inquiryImgFileList.size();i++){
+            InquiryImg inquiryImg = new InquiryImg();
+            inquiryImg.setInquiry(inquiry);
+
+            inquiryImgService.saveInquiryImg(inquiryImg, inquiryImgFileList.get(i));
+        }
+
+        return inquiry.getId();
     }
 
     public List<Inquiry> getAllInquiries() {
@@ -40,10 +62,5 @@ public class InquiryService {
     public void deleteInquiry(Long inquiryId) {
         inquiryRepository.deleteById(inquiryId);
     }
-
-
-//    public Page<Inquiry> getInquiriesByCategory(String category, Pageable pageable) {
-//        return inquiryRepository.findByCategory(category, pageable);
-//    }
 
 }

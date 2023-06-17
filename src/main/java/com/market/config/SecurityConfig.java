@@ -33,7 +33,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .logoutSuccessUrl("/");
 
         http.authorizeRequests()
-                .mvcMatchers("/", "/members/**", "item/**", "/images/**", "/inquiry/**", "/notice/**").permitAll()
+                .mvcMatchers("/", "/members/**", "/item/**", "/images/**", "/inquiry/**", "/notice/**").permitAll()
                 .mvcMatchers("/admin/**").hasRole("ADMIN")
                 .anyRequest().authenticated();
 

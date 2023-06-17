@@ -2,6 +2,7 @@ package com.market.controller;
 
 import com.google.gson.Gson;
 import com.market.dto.InquiryDto;
+import com.market.dto.InquiryFormDto;
 import com.market.dto.ItemFormDto;
 import com.market.dto.MemberFormDto;
 import com.market.entity.Inquiry;
@@ -28,8 +29,9 @@ import java.util.List;
 @RequiredArgsConstructor
 public class InquiryController {
 
-    private final MemberRepository memberRepository;
     private final InquiryService inquiryService;
+
+    private final MemberRepository memberRepository;
 
 
     @GetMapping(value = "/list")
@@ -40,82 +42,35 @@ public class InquiryController {
         return "inquiry/list";
     }
 
-//    @GetMapping(value = "/list")
-//    public String inquiryList(Model model,
-//                              @RequestParam(defaultValue = "0") int page,
-//                              @RequestParam(defaultValue = "10") int size,
-//                              @RequestParam(required = false) String category) {
-//        Pageable pageable = PageRequest.of(page, size, Sort.Direction.DESC, "regDate");
-//        Page<Inquiry> inquiryPage;
-//
-//        if (category != null) {
-//            inquiryPage = inquiryService.getInquiriesByCategory(category, pageable);
-//        } else {
-//            inquiryPage = inquiryService.getAllInquiries(pageable);
-//        }
-//
-//        model.addAttribute("inquiryPage", inquiryPage);
-//
-//        return "inquiry/list";
-//    }
-
-
     @GetMapping(value = "/create")
-    public String inquiryCreateForm(Model model, Principal principal) {
+    public String inquiryForm(Model model, Principal principal) {
         String userId = principal.getName();
         model.addAttribute("userId", userId);
-        model.addAttribute("inquiryDto", new InquiryDto());
-        return "inquiry/createForm";
+        model.addAttribute("inquiryFormDto", new InquiryFormDto());
+        return "inquiry/inquiryForm";
     }
 
     @PostMapping(value = "/create")
-    public String createInquiry(@Valid InquiryDto inquiryDto, Model model) {
-        String email = inquiryDto.getWriter();
+    public String inquiryNew(@Valid InquiryFormDto inquiryFormDto, BindingResult bindingResult, Model model,
+                             @RequestParam("inquiryImgFile") List<MultipartFile> inquiryImgFileList,
+                             @RequestParam String writer){
 
-        Member member = memberRepository.findByEmail(email);
+        if(bindingResult.hasErrors()){
+            return "inquiry/inquiryForm";
+        }
+
+        Member member = memberRepository.findByEmail(writer);  // 적절한 repository 메서드를 사용하여 Member 객체를 조회해야 합니다.
         Long memberId = member.getId();
-        inquiryDto.setMemberId(memberId);
-        System.out.println(memberId);
-        Inquiry inquiry = Inquiry.createInquiry(inquiryDto);
-        inquiryService.saveInquiry(inquiry);
+        inquiryFormDto.setMemberId(memberId);
 
-        return "redirect:/inquiry/list";
+        try{
+            inquiryService.saveInquiry(inquiryFormDto, inquiryImgFileList);
+        } catch (Exception e){
+            model.addAttribute("errorMessage", "문의글 등록 중 에러가 발생하였습니다.");
+            return "inquiry/inquiryForm";
+        }
+        return "redirect:/";
     }
-
-//    @PostMapping(value = "/create")
-//    public String createInquiry(@Valid InquiryDto inquiryDto, BindingResult bindingResult, Model model, @RequestParam("inquiryImgFile")List<MultipartFile> inquiryImgFileList) {
-//        String email = inquiryDto.getWriter();
-//
-//        Member member = memberRepository.findByEmail(email);
-//        Long memberId = member.getId();
-//        inquiryDto.setMemberId(memberId);
-//        System.out.println(memberId);
-//        Inquiry inquiry = Inquiry.createInquiry(inquiryDto);
-//        inquiryService.saveInquiry(inquiry);
-//
-//        return "redirect:/inquiry/list";
-//    }
-
-//    @PostMapping(value = "/admin/item/new")
-//    public String itemNew(@Valid ItemFormDto itemFormDto, BindingResult bindingResult, Model model, @RequestParam("itemImgFile")List<MultipartFile> itemImgFileList){
-//
-//        if(bindingResult.hasErrors()){
-//            return "item/itemForm";
-//        }
-//
-//        if(itemImgFileList.get(0).isEmpty() && itemFormDto.getId() == null){
-//            model.addAttribute("errorMessage", "첫번째 상품 이미지는 필수 값 입니다.");
-//            return "item/itemForm";
-//        }
-//
-//        try{
-//            itemService.saveItem(itemFormDto, itemImgFileList);
-//        } catch (Exception e){
-//            model.addAttribute("errorMessage", "상품 등록 중 에러가 발생하였습니다.");
-//            return "item/itemForm";
-//        }
-//        return "redirect:/";
-//    }
 
     @GetMapping(value = "/{id}")
     public String getInquiry(@PathVariable("id") Long inquiryId, Model model, Principal principal) {
