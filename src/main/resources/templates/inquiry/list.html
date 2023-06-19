@@ -27,19 +27,25 @@
                     <td><a th:href="@{${'/inquiry/' + inquiry.id}}"><span th:text="${inquiry.title}"></span></a></td>
                     <td th:text="${inquiry.writer}"></td>
                     <td th:text="${inquiry.regDate}"></td>
-                    <td th:text="${inquiry.answer != null ? '답변 완료' : '미답변'}"></td>
+                    <td th:text="${inquiry.answers != null ? '답변 완료' : '미답변'}"></td>
                 </tr>
 
             </table>
         </form>
-        <!--        <ul class="pagination d-flex justify-content-center">-->
-        <!--            <li th:if="${p.prev}" class="page-item"><a class="page-link" th:href="@{(${p.startPage-1})}">Previous</a></li>-->
-        <!--            <li th:each="pageBtn : ${#numbers.sequence(p.startPage, p.endPage)}"-->
-        <!--                class="page-item" th:classappend="${pageBtn==param.pageNum or (pageBtn==1 and param.pageNum==null) ? 'active' : ''}">-->
-        <!--                <a class="page-link" th:href="@{${pageBtn}}" th:text="${pageBtn}"></a>-->
-        <!--            </li>-->
-        <!--            <li th:if="${p.next}" class="page-item"><a class="page-link" th:href="@{(${p.endPage+1})}">Next</a></li>-->
-        <!--        </ul>-->
+
+        <!-- 페이징 처리 -->
+        <ul class="pagination d-flex justify-content-center">
+            <li th:if="${currentPage > 1}" class="page-item">
+                <a class="page-link" th:href="@{/inquiry/list(page=${currentPage - 1})}">Previous</a>
+            </li>
+            <li th:each="pageNumber : ${#numbers.sequence(startPage, endPage)}" class="page-item"
+                th:classappend="${pageNumber eq currentPage} ? 'active' : ''">
+                <a class="page-link" th:href="@{/inquiry/list(page=${pageNumber})}" th:text="${pageNumber}"></a>
+            </li>
+            <li th:if="${currentPage < totalPages}" class="page-item">
+                <a class="page-link" th:href="@{/inquiry/list(page=${currentPage + 1})}">Next</a>
+            </li>
+        </ul>
     </div>
 </div>
 

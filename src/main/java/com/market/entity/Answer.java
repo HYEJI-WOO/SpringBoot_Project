@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @Table(name = "answer")
 @Getter
 @Setter
-@ToString
+@ToString(exclude = "inquiry")
 public class Answer {
 
     @Id
@@ -19,7 +19,7 @@ public class Answer {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "inquiry_id")
     private Inquiry inquiry;
 
@@ -29,4 +29,5 @@ public class Answer {
     private String answerer;
 
     private LocalDateTime answerDate;
+
 }

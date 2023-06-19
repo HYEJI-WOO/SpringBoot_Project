@@ -29,5 +29,5 @@ public class InquiryDto {
 
     private List<InquiryImg> imgs;
 
-    private Answer answer;
+    private List<Answer> answers;
 }

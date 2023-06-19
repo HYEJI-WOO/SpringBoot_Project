@@ -68,7 +68,7 @@
             <div class="input-group-prepend">
                 <span class="input-group-text">문의 제목</span>
             </div>
-            <input type="text" th:field="*{title}" class="form-control" placeholder="제목을 입력해주세요">
+            <input type="text" th:field="*{title}" class="form-control" placeholder="제목을 입력해주세요" required>
         </div>
         <p th:if="${#fields.hasErrors('title')}" th:errors="*{title}" class="fieldError">Incorrect data</p>
 
@@ -76,7 +76,7 @@
             <div class="input-group-prepend">
                 <span class="input-group-text">문의 내용</span>
             </div>
-            <textarea class="form-control" aria-label="With textarea" th:field="*{content}"></textarea>
+            <textarea class="form-control" aria-label="With textarea" th:field="*{content}" required></textarea>
         </div>
         <p th:if="${#fields.hasErrors('content')}" th:errors="*{content}" class="fieldError">Incorrect data</p>
 
