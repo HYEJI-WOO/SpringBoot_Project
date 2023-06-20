@@ -5,14 +5,6 @@
 
 <th:block layout:fragment="script">
     <script th:inline="javascript">
-        $(document).ready(function(){
-            var errorMessage = /*[[${errorMessage}]]*/ null;
-            if(errorMessage != null){
-                alert(errorMessage);
-            }
-
-            bindDomEvent();
-        });
 
         function bindDomEvent(){
             $(".custom-file-input").on("change", function() {
@@ -20,14 +12,51 @@
                 var fileExt = fileName.substring(fileName.lastIndexOf(".")+1); // 확장자 추출
                 fileExt = fileExt.toLowerCase(); //소문자 변환
 
-                if(fileExt != "jpg" && fileExt != "jpeg" && fileExt != "gif" && fileExt != "png" && fileExt != "bmp"){
+                if(fileExt !== "jpg" && fileExt !== "jpeg" && fileExt !== "gif" && fileExt !== "png" && fileExt !== "bmp"){
                     alert("이미지 파일만 등록이 가능합니다.");
                     return;
                 }
 
                 $(this).siblings(".custom-file-label").html(fileName);
+
+                // Image preview
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    $(".preview").html('<img src="' + e.target.result + '" alt="Image Preview" class="img-preview">');
+                };
+                reader.readAsDataURL(this.files[0]);
             });
         }
+
+    function previewImage(input, num) {
+        if (input.files && input.files[0]) {
+            var fileName = input.files[0].name;
+            var fileExt = fileName.substring(fileName.lastIndexOf(".") + 1).toLowerCase();
+
+            if (fileExt !== "jpg" && fileExt !== "jpeg" && fileExt !== "gif" && fileExt !== "png" && fileExt !== "bmp") {
+                alert("이미지 파일만 등록이 가능합니다.");
+                return;
+            }
+
+            $(input).siblings(".custom-file-label").text(fileName);
+
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                $('#preview-' + num).html('<img src="' + e.target.result + '" alt="Image Preview" class="img-preview">');
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+<!--    function previewImage(input, num) {-->
+<!--        if (input.files && input.files[0]) {-->
+<!--            var reader = new FileReader();-->
+<!--            reader.onload = function (e) {-->
+<!--                $('#preview-' + num).html('<img src="' + e.target.result + '" alt="Image Preview" class="img-preview">');-->
+<!--            };-->
+<!--            reader.readAsDataURL(input.files[0]);-->
+<!--        }-->
+<!--    }-->
     </script>
 </th:block>
 
@@ -35,13 +64,18 @@
 <th:block layout:fragment="css">
     <style>
         .input-group {
-            margin-bottom : 15px
+            margin-bottom : 15px;
         }
         .img-div {
-            margin-bottom : 10px
+            margin-bottom : 10px;
         }
         .fieldError {
             color: #bd2130;
+        }
+        .img-preview {
+            max-width: 200px;
+            max-height: 200px;
+            margin-top: 10px;
         }
     </style>
 </th:block>
@@ -88,21 +122,12 @@
         </div>
 
         <div th:if="${#lists.isEmpty(inquiryFormDto.inquiryImgDtoList)}">
-        <div class="form-group" th:each="num: ${#numbers.sequence(1,5)}">
-            <div class="custom-file img-div">
-                <input type="file" class="custom-file-input" name="inquiryImgFile">
-                <label class="custom-file-label" th:text="첨부이미지 + ${num}"></label>
-            </div>
-        </div>
-        </div>
-
-        <div th:if = "${not #lists.isEmpty(inquiryFormDto.inquiryImgDtoList)}">
-            <div class="form-group" th:each="inquiryImgDto, status: ${inquiryFormDto.inquiryImgDtoList}">
+            <div class="form-group" th:each="num: ${#numbers.sequence(1,5)}">
                 <div class="custom-file img-div">
-                    <input type="file" class="custom-file-input" name="inquiryImgFile">
-                    <input type="hidden" name="inquiryImgIds" th:value="${inquiryImgDto.id}">
-                    <label class="custom-file-label" th:text="${not #strings.isEmpty(inquiryImgDto.oriImgName)} ? ${inquiryImgDto.oriImgName} : '첨부이미지' + ${status.index+1}"></label>
+                    <input type="file" class="custom-file-input" name="inquiryImgFile" th:onchange="'previewImage(this, ' + ${num} + ')'">
+                    <label class="custom-file-label" th:text="'첨부이미지 ' + ${num}"></label>
                 </div>
+                <div class="preview" th:id="'preview-' + ${num}"></div>
             </div>
         </div>
 

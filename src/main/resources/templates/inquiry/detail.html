@@ -97,7 +97,7 @@
         function addComment(event) {
           event.preventDefault();
           var inquiryId = document.getElementById("inquiryId").value;
-          var comment = document.getElementById("commentInput").value;
+          var comment = document.getElementById("commentContentById").value;
 
           console.log(inquiryId);
           console.log(comment);
@@ -152,22 +152,18 @@
         }
 
         function editComment(event) {
-
           var commentId = event.target.parentNode.querySelector("input[name='commentId']").value;
-          var commentField = event.target.parentNode.querySelector("input[name='commentContent']").value;
-          var commentText = commentField.innerText;
-          var editField = document.createElement("textarea");
+          var commentContent = event.target.parentNode.querySelector("textarea[name='commentContent']").textContent;
 
           console.log(commentId);
-          console.log(commentField);
-          console.log(commentText);
-          console.log(editField);
-
-          editField.value = commentText;
+          console.log(commentContent);
+        
+          var editField = document.createElement("textarea");
+          editField.value = commentField.value;
           editField.className = "form-control";
           commentField.innerHTML = "";
           commentField.appendChild(editField);
-
+        
           var saveButton = document.createElement("button");
           saveButton.className = "btn btn-primary";
           saveButton.innerHTML = "저장";
@@ -175,12 +171,12 @@
             saveComment(commentId);
           };
           commentField.appendChild(saveButton);
-
+        
           var cancelButton = document.createElement("button");
           cancelButton.className = "btn btn-secondary";
           cancelButton.innerHTML = "취소";
           cancelButton.onclick = function() {
-            cancelEditComment(commentId, commentText);
+            cancelEditComment(commentId, commentField.value);
           };
           commentField.appendChild(cancelButton);
         }
@@ -260,7 +256,7 @@
                 </div>
 
                 <div th:each="inquiryImg : ${inquiry.inquiryImgDtoList}" class="text-center">
-                    <img th:if="${not #strings.isEmpty(inquiryImg.imgUrl)}" th:src="${inquiryImg.imgUrl}" class="rounded mgb-15" width="800">
+                    <img th:if="${not #strings.isEmpty(inquiryImg.imgUrl)}" th:src="${inquiryImg.imgUrl}" class="rounded mb-2" style="margin-bottom: 10px;" width="600">
                 </div>
 
 
@@ -268,23 +264,25 @@
                     <button type="button" class="btn btn-secondary" id="listBtn" onclick="gohome(event)">목록</button>
                     <button type="button" class="btn btn-primary" id="modifyBtn" onclick="modify(event)">수정</button>
                     <button type="button" class="btn btn-danger" id="deleteBtn" onclick="deleteInquiry(event)">삭제</button>
-                    <button type="submit" class="btn btn-success" id="completeBtn" style="display: none;" onclick="deleteInquiry(event)">완료</button>
+                    <button type="submit" class="btn btn-success" id="completeBtn" style="display: none;">완료</button>
                     <button type="button" class="btn btn-secondary" id="cancelBtn" onclick="cancelAddressFields(event)" style="display: none;">취소</button>
                 </div>
 
             </div>
         </div>
     </form>
+    <br><br>
 
     <!-- 댓글 작성 -->
     <div class="form-group">
-        <h5>댓글 작성:</h5>
-        <textarea class="form-control" id="commentInput" rows="2" th:if="${#request.isUserInRole('ROLE_ADMIN')}"></textarea>
-        <button type="button" class="btn btn-primary mt-2" onclick="addComment(event)" th:if="${#request.isUserInRole('ROLE_ADMIN')}">댓글 작성</button>
+        <h5>답변 작성:</h5>
+        <textarea class="form-control" id="commentInput" rows="2" th:if="${#request.isUserInRole('ROLE_ADMIN')}" style="white-space: pre-wrap;"></textarea>
+        <button type="button" class="btn btn-primary mt-2 float-right" onclick="addComment(event)" th:if="${#request.isUserInRole('ROLE_ADMIN')}">답변 작성</button>
     </div>
+    <br><br>
 
     <div>
-        <h5>댓글:</h5>
+        <h5>답변:</h5>
         <div th:if="${answers}" th:each="comment : ${answers}">
             <div class="card mb-2">
                 <div class="card-body">
@@ -297,9 +295,14 @@
                             <button type="button" class="btn btn-link p-0" onclick="editComment(event)">수정</button>
                             <button type="button" class="btn btn-link p-0" onclick="deleteComment(event)">삭제</button>
                             <input type="hidden" th:value="${comment.id}" id="commentId" name="commentId">
+                            <input type="hidden" th:value="${comment.content}" id="commentContentById" name="commentContentById">
                         </div>
                     </div>
-                    <div id="commentContent" name="commentContent" class="mt-2" th:text="${comment.content}"></div>
+                    <div>
+                        <textarea id="commentContent" name="commentContent" th:text="${comment.content}" style="width: 100%;" disabled></textarea>
+                    </div>
+
+<!--                    <div id="commentContent" name="commentContent" class="mt-2" th:text="${comment.content}"></div>-->
                 </div>
             </div>
         </div>
