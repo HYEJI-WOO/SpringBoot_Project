@@ -81,9 +81,9 @@ public class InquiryController {
     @PostMapping(value = "/create")
     public String inquiryNew(@Valid InquiryFormDto inquiryFormDto, BindingResult bindingResult, Model model,
                              @RequestParam("inquiryImgFile") List<MultipartFile> inquiryImgFileList,
-                             @RequestParam String writer){
+                             @RequestParam String writer) {
 
-        if(bindingResult.hasErrors()){
+        if (bindingResult.hasErrors()) {
             return "inquiry/inquiryForm";
         }
 
@@ -91,9 +91,9 @@ public class InquiryController {
         Long memberId = member.getId();
         inquiryFormDto.setMemberId(memberId);
 
-        try{
+        try {
             inquiryService.saveInquiry(inquiryFormDto, inquiryImgFileList);
-        } catch (Exception e){
+        } catch (Exception e) {
             model.addAttribute("errorMessage", "문의글 등록 중 에러가 발생하였습니다.");
             return "inquiry/inquiryForm";
         }
@@ -106,7 +106,7 @@ public class InquiryController {
         InquiryFormDto inquiryFormDto = inquiryService.getInquiryById(inquiryId);
         int count = answerService.getCountById(inquiryId);
 
-        if(count >= 1) {
+        if (count >= 1) {
             List<Answer> answers = answerService.getAnswerById(inquiryId);
             System.out.println(answers);
             model.addAttribute("answers", answers);
@@ -171,5 +171,19 @@ public class InquiryController {
         return gson.toJson(true);
     }
 
+    @PostMapping(value = "/editComment/{commentId}")
+    @ResponseBody
+    public String editedAnswer(@PathVariable("commentId") Long commentId, @RequestParam String comment) {
 
+        Optional<Answer> optionalAnswer = answerService.getAnswerById2(commentId);
+
+        if (optionalAnswer.isPresent()) {
+            Answer answer = optionalAnswer.get();
+            answer.setContent(comment);
+            answerService.update(answer);
+        }
+        Gson gson = new Gson();
+        return gson.toJson(true);
+
+    }
 }

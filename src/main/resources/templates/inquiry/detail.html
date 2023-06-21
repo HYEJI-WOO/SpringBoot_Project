@@ -152,44 +152,30 @@
         }
 
         function editComment(event) {
-          var commentId = event.target.parentNode.querySelector("input[name='commentId']").value;
-          var commentContent = event.target.parentNode.querySelector("textarea[name='commentContent']").textContent;
+            var commentId = event.target.parentNode.querySelector("input[name='commentId']").value;
+            var commentContent = event.target.parentNode.querySelector("input[name='commentContentById']").value;
 
-          console.log(commentId);
-          console.log(commentContent);
-        
-          var editField = document.createElement("textarea");
-          editField.value = commentField.value;
-          editField.className = "form-control";
-          commentField.innerHTML = "";
-          commentField.appendChild(editField);
-        
-          var saveButton = document.createElement("button");
-          saveButton.className = "btn btn-primary";
-          saveButton.innerHTML = "저장";
-          saveButton.onclick = function() {
-            saveComment(commentId);
-          };
-          commentField.appendChild(saveButton);
-        
-          var cancelButton = document.createElement("button");
-          cancelButton.className = "btn btn-secondary";
-          cancelButton.innerHTML = "취소";
-          cancelButton.onclick = function() {
-            cancelEditComment(commentId, commentField.value);
-          };
-          commentField.appendChild(cancelButton);
+            console.log(commentId);
+            console.log(commentContent);
+
+            event.target.parentNode.querySelector("textarea[name='commentContent']").disabled = false;
+            event.target.parentNode.querySelector("button[name='editCommentBtn']").style.display = "none";
+            event.target.parentNode.querySelector("button[name='deleteCommentBtn']").style.display = "none";
+            event.target.parentNode.querySelector("button[name='saveCommentBtn']").style.display = "inline-block";
+            event.target.parentNode.querySelector("button[name='cancelEditCommentBtn']").style.display = "inline-block";
         }
 
         function saveComment(commentId) {
           var csrfToken = $("meta[name='_csrf']").attr("content");
           var csrfHeader = $("meta[name='_csrf_header']").attr("content");
 
-          var editedComment = document.getElementById("comment_" + commentId).firstChild.value;
+          var commentId = event.target.parentNode.querySelector("input[name='commentId']").value;
+          var editedComment = event.target.parentNode.querySelector("textarea[name='commentContent']").value;
+          console.log(editedComment);
 
           $.ajax({
             url: "/inquiry/editComment/" + encodeURIComponent(parseInt(commentId)),
-            type: "PUT",
+            type: "POST",
             data: {
               comment: editedComment
             },
@@ -206,9 +192,20 @@
           });
         }
 
-        function cancelEditComment(commentId, commentText) {
-          var commentField = document.getElementById("comment_" + commentId);
-          commentField.innerHTML = commentText;
+        function cancelEditComment() {
+            var commentId = event.target.parentNode.querySelector("input[name='commentId']").value;
+            var commentContent = event.target.parentNode.querySelector("input[name='commentContentById']").value;
+
+            console.log(commentId);
+            console.log(commentContent);
+
+            event.target.parentNode.querySelector("textarea[name='commentContent']").value = commentContent;
+            event.target.parentNode.querySelector("textarea[name='commentContent']").disabled = true;
+            event.target.parentNode.querySelector("button[name='editCommentBtn']").style.display = "inline-block";
+            event.target.parentNode.querySelector("button[name='deleteCommentBtn']").style.display = "inline-block";
+            event.target.parentNode.querySelector("button[name='saveCommentBtn']").style.display = "none";
+            event.target.parentNode.querySelector("button[name='cancelEditCommentBtn']").style.display = "none";
+
         }
 
     </script>
@@ -274,10 +271,10 @@
     <br><br>
 
     <!-- 댓글 작성 -->
-    <div class="form-group">
+    <div class="form-group" th:if="${#request.isUserInRole('ROLE_ADMIN')}">
         <h5>답변 작성:</h5>
-        <textarea class="form-control" id="commentInput" rows="2" th:if="${#request.isUserInRole('ROLE_ADMIN')}" style="white-space: pre-wrap;"></textarea>
-        <button type="button" class="btn btn-primary mt-2 float-right" onclick="addComment(event)" th:if="${#request.isUserInRole('ROLE_ADMIN')}">답변 작성</button>
+        <textarea class="form-control" id="commentInput" rows="2" style="white-space: pre-wrap;"></textarea>
+        <button type="button" class="btn btn-primary mt-2 float-right" onclick="addComment(event)">답변 작성</button>
     </div>
     <br><br>
 
@@ -286,23 +283,23 @@
         <div th:if="${answers}" th:each="comment : ${answers}">
             <div class="card mb-2">
                 <div class="card-body">
-                    <div class="d-flex justify-content-between">
-                        <div>
-                            <strong th:text="관리자"></strong>
-                            <small class="text-muted" th:text="${comment.answerDate}"></small>
-                        </div>
-                        <div>
-                            <button type="button" class="btn btn-link p-0" onclick="editComment(event)">수정</button>
-                            <button type="button" class="btn btn-link p-0" onclick="deleteComment(event)">삭제</button>
-                            <input type="hidden" th:value="${comment.id}" id="commentId" name="commentId">
-                            <input type="hidden" th:value="${comment.content}" id="commentContentById" name="commentContentById">
-                        </div>
-                    </div>
-<!--                    <div>-->
-<!--                        <textarea id="commentContent" name="commentContent" th:text="${comment.content}" style="width: 100%;" disabled></textarea>-->
-<!--                    </div>-->
 
-                    <div id="commentContent" name="commentContent" class="mt-2" th:text="${comment.content}"></div>
+                    <div>
+                        <strong th:text="관리자"></strong>
+                        <small class="text-muted" th:text="${comment.answerDate}"></small>
+                    </div>
+
+                    <button type="button" class="btn btn-link p-0 float-right" id="deleteCommentBtn" name="deleteCommentBtn" onclick="deleteComment(event)">삭제</button>
+                    <button type="button" class="btn btn-link p-0 float-right" id="editCommentBtn" name="editCommentBtn" style="margin-right: 3px;" onclick="editComment(event)">수정</button>
+                    <button type="button" class="btn btn-link p-0 float-right" id="cancelEditCommentBtn" name="cancelEditCommentBtn" style="display: none;" onclick="cancelEditComment(event)">취소</button>
+                    <button type="button" class="btn btn-link p-0 float-right" id="saveCommentBtn" name="saveCommentBtn" style="display: none; margin-right: 3px;" onclick="saveComment(event)">저장</button>
+                    <input type="hidden" th:value="${comment.id}" id="commentId" name="commentId">
+                    <input type="hidden" th:value="${comment.content}" id="commentContentById" name="commentContentById">
+
+                    <textarea id="commentContent" name="commentContent" th:text="${comment.content}" style="width: 100%;" disabled></textarea>
+
+
+<!--                    <div id="commentContent" name="commentContent" class="mt-2" th:text="${comment.content}"></div>-->
                 </div>
             </div>
         </div>

@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -31,6 +32,14 @@ public class AnswerService {
 
     public void delete(Long commentId) {
         answerRepository.deleteById(commentId);
+    }
+
+    public Optional<Answer> getAnswerById2(Long commentId) {
+        return answerRepository.findById(commentId);
+    }
+
+    public void update(Answer answer) {
+        answerRepository.save(answer);
     }
 }
 

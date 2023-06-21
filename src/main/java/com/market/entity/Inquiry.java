@@ -19,7 +19,7 @@ import java.util.List;
 @Table(name="inquiry")
 @Getter
 @Setter
-@ToString(exclude = "answer")
+@ToString(exclude = {"answer", "member"})
 public class Inquiry {
 
     @Id
