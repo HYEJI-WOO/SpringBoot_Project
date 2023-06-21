@@ -26,6 +26,17 @@
         };
     });
 
+  function previewImage(input, num) {
+    if (input.files && input.files[0]) {
+      var reader = new FileReader();
+      reader.onload = function (e) {
+        var previewId = '#preview-' + num;
+        $(previewId).html('<img src="' + e.target.result + '" class="rounded mb-2" style="margin-bottom: 10px;" width="600">');
+      };
+      reader.readAsDataURL(input.files[0]);
+    }
+  }
+
         var title;
         var content;
 
@@ -47,6 +58,10 @@
             // 필드의 값을 전역 변수에 할당
             title = document.getElementById("title").value;
             content = document.getElementById("content").value;
+
+            document.getElementById("imageSection").style.display = "none";
+            document.getElementById("imageEditSection").style.display = "block";
+
         }
 
         function cancelAddressFields(event) {
@@ -253,9 +268,23 @@
                 </div>
 
                 <div th:each="inquiryImg : ${inquiry.inquiryImgDtoList}" class="text-center">
-                    <img th:if="${not #strings.isEmpty(inquiryImg.imgUrl)}" th:src="${inquiryImg.imgUrl}" class="rounded mb-2" style="margin-bottom: 10px;" width="600">
+                    <img id="imageSection" th:if="${not #strings.isEmpty(inquiryImg.imgUrl)}" th:src="${inquiryImg.imgUrl}" class="rounded mb-2" style="margin-bottom: 10px;" width="600">
                 </div>
 
+                <!--수정-->
+                <div id="imageEditSection" th:if="${loggedInUser == writer}" style="display: none;">
+                    <div class="form-group" th:each="num: ${#numbers.sequence(1,5)}">
+                        <div class="custom-file img-div">
+                            <input type="file" class="custom-file-input" name="inquiryImgFile" th:onchange="'previewImage(this, ' + ${num} + ')'">
+                            <label class="custom-file-label" th:text="${inquiry.inquiryImgDtoList[num-1].oriImgName}"></label>
+                        </div>
+                        <div class="preview" th:id="'preview-' + ${num}"></div>
+                        <!-- 이미지 미리보기 영역 -->
+                        <div th:if="${not #strings.isEmpty(inquiry.inquiryImgDtoList[num-1].imgUrl)}">
+                            <img th:src="${inquiry.inquiryImgDtoList[num-1].imgUrl}" class="rounded mb-2" style="margin-bottom: 10px;" width="600">
+                        </div>
+                    </div>
+                </div>
 
                 <div class="form-group text-right mt-3">
                     <button type="button" class="btn btn-secondary" id="listBtn" onclick="gohome(event)">목록</button>
@@ -298,8 +327,6 @@
 
                     <textarea id="commentContent" name="commentContent" th:text="${comment.content}" style="width: 100%;" disabled></textarea>
 
-
-<!--                    <div id="commentContent" name="commentContent" class="mt-2" th:text="${comment.content}"></div>-->
                 </div>
             </div>
         </div>
