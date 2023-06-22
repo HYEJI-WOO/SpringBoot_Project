@@ -29,12 +29,6 @@ public class ItemService {
 
     private final ItemImgRepository itemImgRepository;
 
-    private final ReviewRepository reviewRepository;
-
-    private final ReviewImgService reviewImgService;
-
-    private final ReviewImgRepository reviewImgRepository;
-
     public Long saveItem(ItemFormDto itemFormDto, List<MultipartFile> itemImgFileList) throws Exception{
 
         //상품 등록
@@ -95,24 +89,6 @@ public class ItemService {
     @Transactional(readOnly = true)
     public Page<MainItemDto> getMainItemPage(ItemSearchDto itemSearchDto, Pageable pageable){
         return itemRepository.getMainItemPage(itemSearchDto, pageable);
-    }
-
-    public void saveReview(ReviewDto reviewDto, List<MultipartFile> reviewImgFileList) throws Exception {
-
-        reviewDto.setRegDate(LocalDateTime.now());
-        System.out.println("사이즈다 :" + reviewImgFileList.size());
-
-        Review review = reviewDto.createInquiry();
-        reviewRepository.save(review);
-
-        // 이미지 등록
-        for (MultipartFile file : reviewImgFileList) {
-            if (!file.isEmpty()) {
-                ReviewImg reviewImg = new ReviewImg();
-                reviewImg.setReview(review);
-                reviewImgService.saveReviewImg(reviewImg, file);
-            }
-        }
     }
 
 //    @Transactional(readOnly = true)

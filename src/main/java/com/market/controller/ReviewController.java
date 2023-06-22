@@ -4,6 +4,7 @@ import com.market.dto.ReviewDto;
 import com.market.entity.Item;
 import com.market.repository.ItemRepository;
 import com.market.service.ItemService;
+import com.market.service.ReviewService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -20,6 +21,7 @@ public class ReviewController {
 
     private final ItemService itemService;
     private final ItemRepository itemRepository;
+    private final ReviewService reviewService;
 
     @PostMapping("/item/reviews")
     public String submitReview(Model model, @RequestParam("itemIdNum") Long itemId, @RequestParam("userId") String userId,
@@ -33,7 +35,7 @@ public class ReviewController {
         item.ifPresent(reviewDto::setItem);
 
         try {
-            itemService.saveReview(reviewDto, reviewImgFileList);
+            reviewService.saveReview(reviewDto, reviewImgFileList);
         } catch (Exception e) {
             model.addAttribute("errorMessage", "문의글 등록 중 에러가 발생하였습니다.");
             return "redirect:/";
