@@ -46,6 +46,10 @@ public class InquiryController {
 
         int pageSize = 8; // 한 페이지에 보여줄 글 수
         int totalItems = (int) inquiryService.getTotalInquiryCount();
+        if (totalItems == 0) {
+            totalItems = 1;
+        }
+
         int totalPages = (int) Math.ceil(totalItems / (double) pageSize);
 
         // 현재 페이지가 범위를 벗어나지 않도록 제한

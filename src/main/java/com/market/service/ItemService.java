@@ -1,13 +1,11 @@
 package com.market.service;
 
-import com.market.dto.ItemFormDto;
-import com.market.dto.ItemImgDto;
-import com.market.dto.ItemSearchDto;
-import com.market.dto.MainItemDto;
-import com.market.entity.Item;
-import com.market.entity.ItemImg;
+import com.market.dto.*;
+import com.market.entity.*;
 import com.market.repository.ItemImgRepository;
 import com.market.repository.ItemRepository;
+import com.market.repository.ReviewImgRepository;
+import com.market.repository.ReviewRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -16,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.EntityNotFoundException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,6 +28,12 @@ public class ItemService {
     private final ItemImgService itemImgService;
 
     private final ItemImgRepository itemImgRepository;
+
+    private final ReviewRepository reviewRepository;
+
+    private final ReviewImgService reviewImgService;
+
+    private final ReviewImgRepository reviewImgRepository;
 
     public Long saveItem(ItemFormDto itemFormDto, List<MultipartFile> itemImgFileList) throws Exception{
 
@@ -92,6 +97,53 @@ public class ItemService {
         return itemRepository.getMainItemPage(itemSearchDto, pageable);
     }
 
+    public void saveReview(ReviewDto reviewDto, List<MultipartFile> reviewImgFileList) throws Exception {
+
+        reviewDto.setRegDate(LocalDateTime.now());
+        System.out.println("사이즈다 :" + reviewImgFileList.size());
+
+        Review review = reviewDto.createInquiry();
+        reviewRepository.save(review);
+
+        // 이미지 등록
+        for (MultipartFile file : reviewImgFileList) {
+            if (!file.isEmpty()) {
+                ReviewImg reviewImg = new ReviewImg();
+                reviewImg.setReview(review);
+                reviewImgService.saveReviewImg(reviewImg, file);
+            }
+        }
+    }
+
+//    @Transactional(readOnly = true)
+//    public ItemFormDto getItemDtl(Long itemId){
+//
+//        List<ItemImg> itemImgList = itemImgRepository.findByItemIdOrderByIdAsc(itemId);
+//        List<ItemImgDto> itemImgDtoList = new ArrayList<>();
+//        for (ItemImg itemImg : itemImgList) {
+//            ItemImgDto itemImgDto = ItemImgDto.of(itemImg);
+//            itemImgDtoList.add(itemImgDto);
+//        }
+//
+//        Item item = itemRepository.findById(itemId)
+//                .orElseThrow(EntityNotFoundException::new);
+//        ItemFormDto itemFormDto = ItemFormDto.of(item);
+//        itemFormDto.setItemImgDtoList(itemImgDtoList);
+//        return itemFormDto;
+//    }
+
+//    @Transactional(readOnly = true)
+//    public ReviewDto getReviewList(Long itemId) {
+//
+//        List<ReviewImg> reviewImgList = reviewImgRepository.findByItemIdOrderByIdAsc(itemId);
+//        List<ReviewImgDto> reviewImgDtoList = new ArrayList<>();
+//        for (ReviewImg reviewImg : reviewImgList) {
+//            ReviewImgDto reviewImgDto = ReviewImgDto.of(reviewImg);
+//            reviewImgDtoList.add(reviewImgDto);
+//        }
+//
+//
+//    }
 }
 
 
