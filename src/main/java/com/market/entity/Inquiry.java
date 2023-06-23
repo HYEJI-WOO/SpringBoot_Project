@@ -4,6 +4,7 @@ import com.market.constant.InquiryStatus;
 import com.market.constant.InquiryType;
 import com.market.constant.Role;
 import com.market.dto.InquiryDto;
+import com.market.dto.InquiryFormDto;
 import com.market.dto.MemberFormDto;
 import lombok.Getter;
 import lombok.Setter;
@@ -71,6 +72,9 @@ public class Inquiry {
         return inquiry;
     }
 
-
+    public void updateInquiry(InquiryFormDto inquiryFormDto){
+        this.title = inquiryFormDto.getTitle();
+        this.content = inquiryFormDto.getContent();
+    }
 
 }

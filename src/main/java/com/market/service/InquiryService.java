@@ -3,8 +3,6 @@ package com.market.service;
 import com.market.constant.InquiryStatus;
 import com.market.dto.InquiryFormDto;
 import com.market.dto.InquiryImgDto;
-import com.market.dto.ItemFormDto;
-import com.market.dto.ItemImgDto;
 import com.market.entity.*;
 import com.market.repository.InquiryImgRepository;
 import com.market.repository.InquiryRepository;
@@ -79,14 +77,23 @@ public class InquiryService {
         return inquiryRepository.findAll(sort);
     }
 
-    public void update(Inquiry inquiry) {
-        inquiryRepository.save(inquiry);
+    public Long update(InquiryFormDto inquiryFormDto, List<MultipartFile> inquiryImgFileList) throws  Exception {
+
+        Inquiry inquiry = inquiryRepository.findById(inquiryFormDto.getId()).orElseThrow(EntityNotFoundException::new);
+        inquiry.updateInquiry(inquiryFormDto);
+
+        List<Long> inquiryImgIds = inquiryFormDto.getInquiryImgIds();
+
+        for (int i=0; i<inquiryImgFileList.size(); i++){
+            inquiryImgService.updateInquiryImg(inquiryImgIds.get(i), inquiryImgFileList.get(i));
+        }
+        return inquiry.getId();
     }
 
     public void deleteInquiry(Long inquiryId) {
         inquiryRepository.deleteById(inquiryId);
-    }
 
+    }
 
     public double getTotalInquiryCount() {
         return inquiryRepository.count();

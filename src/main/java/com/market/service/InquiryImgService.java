@@ -48,22 +48,9 @@ public class InquiryImgService {
             String imgName = fileService.uploadFile(inquiryImgLocation, oriImgName, inquiryImgFile.getBytes());
             String imgUrl = "/images/inquiry/" + imgName;
             savedInquiryImg.updateInquiryImg(oriImgName, imgName, imgUrl);
+
+            System.out.println("InquiryImg 업데이트 - inquiryImgId: " + inquiryImgId + ", oriImgName: " + oriImgName + ", imgName: " + imgName + ", imgUrl: " + imgUrl);
         }
     }
-
-//    public void deleteInquiryImg(Long inquiryImgId) {
-//        InquiryImg inquiryImg = inquiryImgRepository.findById(inquiryImgId)
-//                .orElseThrow(EntityNotFoundException::new);
-//
-//        // 이미지 파일 삭제 (이 부분은 사용하는 스토리지 메커니즘에 따라 구현해야 합니다.)
-//        String imgName = inquiryImg.getImgName();
-//        if (!StringUtils.isEmpty(imgName)) {
-//            String filePath = inquiryImgLocation + "/" + imgName;
-//            fileService.deleteFile(filePath);
-//        }
-//
-//        // 문의 이미지 삭제
-//        inquiryImgRepository.delete(inquiryImg);
-//    }
 
 }

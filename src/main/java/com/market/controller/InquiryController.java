@@ -52,7 +52,6 @@ public class InquiryController {
 
         int totalPages = (int) Math.ceil(totalItems / (double) pageSize);
 
-        // 현재 페이지가 범위를 벗어나지 않도록 제한
         if (page < 1) {
             page = 1;
         } else if (page > totalPages) {
@@ -117,20 +116,27 @@ public class InquiryController {
 
         }
 
-        model.addAttribute("inquiry", inquiryFormDto);
+        model.addAttribute("inquiryFormDto", inquiryFormDto);
         model.addAttribute("username", username);
         return "inquiry/detail";
     }
 
 
-    @PostMapping(value = "/modify")
-    public String modify(@ModelAttribute InquiryDto inquiryDto, @RequestParam Long inquiryId) {
-        Inquiry inquiry = inquiryService.getInquiryById2(inquiryId);
-        inquiry.setTitle(inquiryDto.getTitle());
-        inquiry.setContent(inquiryDto.getContent());
-        inquiryService.update(inquiry);
+    @PostMapping(value = "/modify/{id}")
+    public String modify(@Valid InquiryFormDto inquiryFormDto, BindingResult bindingResult, @RequestParam("inquiryImgFile") List<MultipartFile> inquiryImgFileList, Model model) {
 
-        return "redirect:/inquiry/list";
+        System.out.println("================="+inquiryFormDto);
+        if (bindingResult.hasErrors()){
+            return "inquiry/detail";
+        }
+
+        try {
+            inquiryService.update(inquiryFormDto, inquiryImgFileList);
+        }catch (Exception e){
+            model.addAttribute("errorMessage", "문의글 수정 중 에러가 발생하였습니다.");
+            return  "inquiry/detail";
+        }
+        return "redirect:/inquiry/" + inquiryFormDto.getId();
     }
 
     @DeleteMapping(value = "/delete/{id}")
@@ -154,7 +160,6 @@ public class InquiryController {
 
         Inquiry inquiry = inquiryRepository.getInquiryById(inquiryId);
         if (inquiry == null) {
-            // Handle error when inquiry is not found
             return "Inquiry not found";
         }
 

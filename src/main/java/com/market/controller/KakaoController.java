@@ -46,8 +46,8 @@ public class KakaoController {
 
         if (existingMember != null) {
             // 이미 가입된 회원인 경우, 로그인 처리
-            // 로그인 처리 로직을 구현하세요 (예: 세션 설정 등)
-            return "redirect:/"; // 로그인 후 이동할 경로
+
+            return "redirect:/";
         } else {
             MemberFormDto memberFormDto = new MemberFormDto();
             memberFormDto.setEmail(email);
