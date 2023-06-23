@@ -5,6 +5,7 @@ import com.market.dto.ItemSearchDto;
 import com.market.dto.ReviewDto;
 import com.market.entity.Answer;
 import com.market.entity.Item;
+import com.market.entity.Review;
 import com.market.service.ItemService;
 import com.market.service.ReviewImgService;
 import com.market.service.ReviewService;
@@ -118,21 +119,15 @@ public class ItemController {
         ItemFormDto itemFormDto = itemService.getItemDtl(itemId);
 
         int count = reviewService.getCountById(itemId);
-        System.out.println("==============================");
-        System.out.println("==============================");
-        System.out.println(count);
-        System.out.println("==============================");
-        System.out.println("==============================");
 
-//        if (count >= 1) {
-//            List<Answer> answers = answerService.getAnswerById(inquiryId);
-//            System.out.println(answers);
-//            model.addAttribute("answers", answers);
-//
-//        }
-//        ReviewDto reviewDto = itemService.getReviewList(itemId);
+        if (count >= 1) {
+            List<Review> reviews = reviewService.getReviewById(itemId);
+            model.addAttribute("reviews", reviews);
+        }
+
         model.addAttribute("item", itemFormDto);
         model.addAttribute("userId", userId);
+        model.addAttribute("reviewCount", count);
         return "item/itemDtl";
     }
 

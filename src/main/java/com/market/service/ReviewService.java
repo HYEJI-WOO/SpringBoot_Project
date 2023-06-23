@@ -7,6 +7,7 @@ import com.market.entity.ReviewImg;
 import com.market.repository.AnswerRepository;
 import com.market.repository.ReviewRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -40,14 +41,25 @@ public class ReviewService {
         }
     }
 
-//    public List<Answer> getReviewById(Long inquiryId) {
-//        List<Answer> answers = answerRepository.findByInquiryId(inquiryId);
-//        return answers;
-//    }
-
 
     public int getCountById(Long itemId) {
         return reviewRepository.getCountById(itemId);
+    }
+
+
+//    public List<Review> getReviewById(Long itemId) {
+//        List<Review> reviews = reviewRepository.findByItemId(itemId);
+//        return reviews;
+//    }
+
+    public List<Review> getReviewById(Long itemId) {
+        Sort sort = Sort.by(Sort.Direction.DESC, "regDate"); // regDate를 내림차순으로 정렬하는 Sort 객체 생성
+        List<Review> reviews = reviewRepository.findByItemIdOrderByRegDateDesc(itemId, sort); // 정렬 방식을 적용하여 리뷰 가져오기
+        return reviews;
+    }
+
+    public void deleteReview(Long reviewId) {
+        reviewRepository.deleteById(reviewId);
     }
 }
 

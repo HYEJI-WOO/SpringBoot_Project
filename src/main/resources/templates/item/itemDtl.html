@@ -18,6 +18,10 @@
             $("#count").change( function(){
                 calculateToalPrice();
             });
+
+            $(document).on('click', '.preview-image', function() {
+              $(this).toggleClass('selected');
+            });
         });
 
         function previewImages(event) {
@@ -137,6 +141,32 @@
             });
         }
 
+        function deleteComment(event) {
+          var csrfToken = $("meta[name='_csrf']").attr("content");
+          var csrfHeader = $("meta[name='_csrf_header']").attr("content");
+
+          var commentId = event.target.parentNode.querySelector("input[name='commentId']").value;
+
+          // 삭제 확인 메시지 표시
+          var confirmDelete = confirm("리뷰를 삭제하시겠습니까?");
+          if (confirmDelete) {
+            $.ajax({
+              url: "/review/delete/" + encodeURIComponent(parseInt(commentId)),
+              type: "DELETE",
+              beforeSend: function(xhr) {
+                xhr.setRequestHeader(csrfHeader, csrfToken);
+              },
+              success: function(response) {
+                // 댓글 삭제 성공 시, 페이지 새로고침
+                window.location.reload();
+              },
+              error: function(error) {
+                console.log('실패');
+              }
+            });
+          }
+        }
+
     </script>
 </th:block>
 
@@ -204,6 +234,23 @@
         .review-form button[type="submit"]:hover {
           background-color: #45a049;
         }
+
+        .preview-image.selected {
+          width: auto;
+          height: auto;
+          max-width: 100%;
+          max-height: 100%;
+          object-fit: contain;
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          margin: auto;
+          z-index: 9999;
+          background-color: rgba(0, 0, 0, 0.8);
+          cursor: zoom-out;
+        }
     </style>
 </th:block>
 
@@ -219,7 +266,7 @@
             <span th:if="${item.itemSellStatus == 'SELL'} ? '판매중' : '품절'" class="badge badge-primary mgb-15">
                 판매중
             </span>
-      <span th:unless="${item.itemSellStatus == 'SELL'} ? '판매중' : '품절'" class="badge btn-danger mgb-15" >
+            <span th:unless="${item.itemSellStatus == 'SELL'} ? '판매중' : '품절'" class="badge btn-danger mgb-15" >
                 품절
             </span>
       <div class="h4" th:text="${item.itemNm}"></div>
@@ -265,16 +312,8 @@
     <img th:if="${not #strings.isEmpty(itemImg.imgUrl)}" th:src="${itemImg.imgUrl}" class="rounded mgb-15" width="800">
   </div>
 
-<!--  &lt;!&ndash; 댓글 작성 &ndash;&gt;-->
-<!--  <div class="form-group" th:if="${#request.isUserInRole('ROLE_ADMIN')}">-->
-<!--    <h5>리뷰 작성:</h5>-->
-<!--    <textarea class="form-control" id="commentInput" rows="2" style="white-space: pre-wrap;"></textarea>-->
-<!--    <button type="button" class="btn btn-primary mt-2 float-right" onclick="addComment(event)">리뷰 작성</button>-->
-<!--  </div>-->
-<!--  <br><br>-->
-
-  <div class="review-form">
-    <h5>리뷰작성</h5>
+  <div class="review-form card mb-2">
+    <h2>리뷰작성</h2>
     <form action="/item/reviews" method="post" enctype="multipart/form-data">
       <div>
         <label for="itemIdNum"></label>
@@ -298,6 +337,40 @@
       <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
     </form>
   </div>
+
+  <br><br>
+
+  <div>
+    <h5 th:text="'리뷰[' + ${reviewCount} + ']'"></h5>
+    <div th:if="${reviews}" th:each="comment : ${reviews}">
+      <div class="card mb-2">
+        <div class="card-body">
+          <div>
+            <strong th:text="${comment.writer}"></strong>
+            <small class="text-muted" th:text="${comment.regDate}"></small>
+          </div>
+
+          <button type="button" class="btn btn-link p-0 float-right" id="deleteCommentBtn" name="deleteCommentBtn" th:if="${comment.writer == userId}" onclick="deleteComment(event)">삭제</button>
+          <input type="hidden" th:value="${comment.id}" id="commentId" name="commentId">
+          <input type="hidden" th:value="${comment.content}" id="commentContentById" name="commentContentById">
+
+          <textarea id="commentContent" name="commentContent" th:text="${comment.content}" style="width: 100%;" disabled></textarea>
+
+          <div class="row">
+            <div th:each="reviewImg : ${comment.imgs}" class="col-md-3 text-center">
+              <a href="#">
+                <img th:if="${not #strings.isEmpty(reviewImg.imgUrl)}" th:src="${reviewImg.imgUrl}" class="rounded mb-2 preview-image" style="margin-bottom: 10px;" width="100">
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div th:unless="${answers}">
+      <p>등록된 답변이 없습니다.</p>
+    </div>
+  </div>
+
 
 
 </div>

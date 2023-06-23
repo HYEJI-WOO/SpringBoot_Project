@@ -13,29 +13,29 @@
 
     <script th:inline="javascript">
 
-    $(document).ready(function(){
-        var loggedInUser = document.getElementById("username").value;
-        var writer = document.getElementById("writer").value;
+        $(document).ready(function(){
+            var loggedInUser = document.getElementById("username").value;
+            var writer = document.getElementById("writer").value;
 
-        if (loggedInUser === writer) {
-            document.getElementById("modifyBtn").style.display = "inline-block";
-            document.getElementById("deleteBtn").style.display = "inline-block";
-        } else {
-            document.getElementById("modifyBtn").style.display = "none";
-            document.getElementById("deleteBtn").style.display = "none";
-        };
-    });
+            if (loggedInUser === writer) {
+                document.getElementById("modifyBtn").style.display = "inline-block";
+                document.getElementById("deleteBtn").style.display = "inline-block";
+            } else {
+                document.getElementById("modifyBtn").style.display = "none";
+                document.getElementById("deleteBtn").style.display = "none";
+            };
+        });
 
-  function previewImage(input, num) {
-    if (input.files && input.files[0]) {
-      var reader = new FileReader();
-      reader.onload = function (e) {
-        var previewId = '#preview-' + num;
-        $(previewId).html('<img src="' + e.target.result + '" class="rounded mb-2" style="margin-bottom: 10px;" width="600">');
-      };
-      reader.readAsDataURL(input.files[0]);
-    }
-  }
+        function previewImage(input, num) {
+            if (input.files && input.files[0]) {
+              var reader = new FileReader();
+              reader.onload = function (e) {
+                var previewId = '#preview-' + num;
+                $(previewId).html('<img src="' + e.target.result + '" class="rounded mb-2" style="margin-bottom: 10px;" width="600">');
+              };
+              reader.readAsDataURL(input.files[0]);
+            }
+        }
 
         var title;
         var content;
@@ -317,13 +317,14 @@
                         <strong th:text="관리자"></strong>
                         <small class="text-muted" th:text="${comment.answerDate}"></small>
                     </div>
+                    <button type="button" class="btn btn-link p-0 float-right" id="deleteCommentBtn" name="deleteCommentBtn" th:if="${comment.answerer == username}" onclick="deleteComment(event)">삭제</button>
+                    <button type="button" class="btn btn-link p-0 float-right" id="editCommentBtn" name="editCommentBtn" th:if="${comment.answerer == username}" style="margin-right: 3px;" onclick="editComment(event)">수정</button>
+                    <button type="button" class="btn btn-link p-0 float-right" id="cancelEditCommentBtn" name="cancelEditCommentBtn" th:if="${comment.answerer == username}" style="display: none;" onclick="cancelEditComment(event)">취소</button>
+                    <button type="button" class="btn btn-link p-0 float-right" id="saveCommentBtn" name="saveCommentBtn" th:if="${comment.answerer == username}" style="display: none; margin-right: 3px;" onclick="saveComment(event)">저장</button>
 
-                    <button type="button" class="btn btn-link p-0 float-right" id="deleteCommentBtn" name="deleteCommentBtn" onclick="deleteComment(event)">삭제</button>
-                    <button type="button" class="btn btn-link p-0 float-right" id="editCommentBtn" name="editCommentBtn" style="margin-right: 3px;" onclick="editComment(event)">수정</button>
-                    <button type="button" class="btn btn-link p-0 float-right" id="cancelEditCommentBtn" name="cancelEditCommentBtn" style="display: none;" onclick="cancelEditComment(event)">취소</button>
-                    <button type="button" class="btn btn-link p-0 float-right" id="saveCommentBtn" name="saveCommentBtn" style="display: none; margin-right: 3px;" onclick="saveComment(event)">저장</button>
                     <input type="hidden" th:value="${comment.id}" id="commentId" name="commentId">
                     <input type="hidden" th:value="${comment.content}" id="commentContentById" name="commentContentById">
+
 
                     <textarea id="commentContent" name="commentContent" th:text="${comment.content}" style="width: 100%;" disabled></textarea>
 
