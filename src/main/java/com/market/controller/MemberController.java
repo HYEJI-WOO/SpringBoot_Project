@@ -166,7 +166,7 @@ public class MemberController {
 
         // 구글 계정 정보
         String username = "whj1939@gmail.com";
-        String password = "fgkzeryvfadbmsqi";
+        String password = "xx";
 
         // 인증 정보
         Authenticator authenticator = new Authenticator() {
@@ -183,7 +183,7 @@ public class MemberController {
             MimeMessage message = new MimeMessage(session);
             message.setFrom(new InternetAddress("whj1939@gmail.com"));
             message.setRecipient(Message.RecipientType.TO, new InternetAddress(SetEmail));
-            message.setSubject("LOGO마켓 인증번호입니다.");
+            message.setSubject("Market 인증번호입니다.");
             message.setText("인증번호: " + certificationNumber);
 
             // 이메일 전송
