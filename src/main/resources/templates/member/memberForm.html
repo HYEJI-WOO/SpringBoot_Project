@@ -182,7 +182,7 @@ function check_email(email_check) {
         </div>
         <div class="form-group">
             <label th:for="address1">주소</label>
-            <input type="text" id="address1" class="form-control" placeholder="주소를 입력해주세요" th:field="*{address1}" disabled>
+            <input type="text" id="address1" class="form-control" placeholder="주소를 입력해주세요" th:field="*{address1}" readonly>
             <button type="button" onclick="searchAddress()">주소 검색</button>
             <p th:if="${#fields.hasErrors('address1')}" th:errors="*{address1}" class="fieldError">Incorrect data</p>
         </div>

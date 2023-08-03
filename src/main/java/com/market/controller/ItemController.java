@@ -115,7 +115,10 @@ public class ItemController {
 
     @GetMapping(value = "/item/{itemId}")
     public String itemDtl(Model model, @PathVariable("itemId") Long itemId, Principal principal){
-        String userId = principal.getName();
+        // 로그인 여부 확인
+        boolean isLoggedIn = principal != null;
+
+        // 상품 정보 조회
         ItemFormDto itemFormDto = itemService.getItemDtl(itemId);
 
         int count = reviewService.getCountById(itemId);
@@ -126,10 +129,15 @@ public class ItemController {
         }
 
         model.addAttribute("item", itemFormDto);
-        model.addAttribute("userId", userId);
+
+        // 로그인 여부에 따라 다른 데이터 전달
+        if (isLoggedIn) {
+            String userId = principal.getName();
+            model.addAttribute("userId", userId);
+        }
+
         model.addAttribute("reviewCount", count);
         return "item/itemDtl";
     }
-
 
 }

@@ -105,7 +105,10 @@ public class InquiryController {
 
     @GetMapping(value = "/{id}")
     public String getInquiry(@PathVariable("id") Long inquiryId, Model model, Principal principal) {
-        String username = principal.getName();
+        // 로그인 여부 확인
+        boolean isLoggedIn = principal != null;
+
+        // 문의 정보 조회
         InquiryFormDto inquiryFormDto = inquiryService.getInquiryById(inquiryId);
         int count = answerService.getCountById(inquiryId);
 
@@ -113,11 +116,16 @@ public class InquiryController {
             List<Answer> answers = answerService.getAnswerById(inquiryId);
             System.out.println(answers);
             model.addAttribute("answers", answers);
-
         }
 
         model.addAttribute("inquiryFormDto", inquiryFormDto);
-        model.addAttribute("username", username);
+
+        // 로그인 여부에 따라 다른 데이터 전달
+        if (isLoggedIn) {
+            String username = principal.getName();
+            model.addAttribute("username", username);
+        }
+
         return "inquiry/detail";
     }
 

@@ -1,12 +1,13 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       layout:decorate="~{layouts/layout1}">
 
 <div layout:fragment="content">
     <div class="container my-3">
         <h1 style="margin-top: 5%; text-align: center;">Q&A</h1>
-        <a th:href="@{/inquiry/create}" class="btn boardWrite" style="float: right; margin-right: 0px;">Write</a>
+        <a th:href="@{/inquiry/create}" class="btn boardWrite" style="float: right; margin-right: 0px;" sec:authorize="hasAnyAuthority('ROLE_USER')">Write</a>
         <br><br>
         <form id="listForm">
 
@@ -17,7 +18,6 @@
                     <th>제목</th>
                     <th>작성자</th>
                     <th>작성일</th>
-                    <th>답변여부</th>
                 </tr>
                 <tr th:each="inquiry : ${inquiries}">
                     <td th:text="${inquiry.id}"></td>
@@ -27,7 +27,6 @@
                     <td><a th:href="@{${'/inquiry/' + inquiry.id}}"><span th:text="${inquiry.title}"></span></a></td>
                     <td th:text="${inquiry.writer}"></td>
                     <td th:text="${inquiry.regDate}"></td>
-                    <td th:text="${inquiry.answers != null ? '답변 완료' : '미답변'}"></td>
                 </tr>
 
             </table>

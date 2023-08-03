@@ -126,7 +126,7 @@
                 cache   : false,
                 success  : function(result, status){
                     alert("상품을 장바구니에 담았습니다.");
-                    location.href='/';
+                    location.href='/cart';
                 },
                 error : function(jqXHR, status, error){
 
@@ -291,8 +291,8 @@
         <h3 name="totalPrice" id="totalPrice" class="font-weight-bold"></h3>
       </div>
       <div th:if="${item.itemSellStatus == 'SELL'} ? '판매중' : '품절'" class="text-right">
-        <button type="button" class="btn btn-light border border-primary btn-lg" onclick="addCart()">장바구니 담기</button>
-        <button type="button" class="btn btn-primary btn-lg" onclick="order()">주문하기</button>
+        <button type="button" class="btn btn-light border border-success btn-lg" onclick="addCart()">장바구니 담기</button>
+        <button type="button" class="btn btn-success btn-lg" onclick="order()">주문하기</button>
       </div>
       <div th:unless="${item.itemSellStatus == 'SELL'} ? '판매중' : '품절'" class="text-right">
         <button type="button" class="btn btn-danger btn-lg">품절</button>
@@ -366,8 +366,8 @@
         </div>
       </div>
     </div>
-    <div th:unless="${answers}">
-      <p>등록된 답변이 없습니다.</p>
+    <div th:unless="${reviews}">
+      <p>등록된 리뷰가 없습니다.</p>
     </div>
   </div>
 

@@ -29,18 +29,39 @@
         .center{
             text-align:center;
         }
+
     </style>
 </th:block>
 
 <div layout:fragment="content">
 
+
     <div id="carouselControls" class="carousel slide margin" data-ride="carousel">
         <div class="carousel-inner">
             <div class="carousel-item active item">
-                <img class="d-block w-100 banner" src="https://user-images.githubusercontent.com/13268420/112147492-1ab76200-8c20-11eb-8649-3d2f282c3c02.png" alt="First slide">
+                <img class="d-block w-100 banner" src="https://cdn.crowdpic.net/detail-thumb/thumb_d_07BDC5277C481D32559AB2354B8E18FD.jpg" alt="First slide">
             </div>
+            <div class="carousel-item item">
+                <img class="d-block w-100 banner" src="https://cdn-pro-web-219-179.cdn-nhncommerce.com/mannamtr0115_godomall_com/data/skin/front/happykids/img/banner/slider_511517418/0b7a5e75f5923b0906eb2b54ad1d574c_71440.jpg" alt="Second slide">
+            </div>
+            <div class="carousel-item item">
+                <img class="d-block w-100 banner" src="https://cdn-pro-web-219-179.cdn-nhncommerce.com/mannamtr0115_godomall_com/data/skin/front/happykids/img/banner/slider_511517418/515112bd8729139231b0cde95598e71c_79245.jpg" alt="Third slide">
+            </div>
+            <div class="carousel-item item">
+                <img class="d-block w-100 banner" src="https://cdn-pro-web-219-179.cdn-nhncommerce.com/mannamtr0115_godomall_com/data/skin/front/happykids/img/banner/slider_511517418/30190ce6ef6f89dc3516384304c50bd0_43866.jpg" alt="Forth slide">
+            </div>
+
         </div>
+        <a class="carousel-control-prev" href="#carouselControls" role="button" data-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="sr-only">Previous</span>
+        </a>
+        <a class="carousel-control-next" href="#carouselControls" role="button" data-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="sr-only">Next</span>
+        </a>
     </div>
+
 
     <input type="hidden" name="searchQuery" th:value="${itemSearchDto.searchQuery}">
     <div th:if="${not #strings.isEmpty(itemSearchDto.searchQuery)}" class="center">

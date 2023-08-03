@@ -142,62 +142,62 @@ public class MemberController {
         }
     }
 
-    @PostMapping("/sendCertificationNumberPwd")
-    @ResponseBody
-    public String sendCertificationNumberPwd() {
-        String certificationNumber = String.format("%06d", (int) (Math.random() * 1000000));
-        System.out.println(SetEmail);
-        System.out.println(certificationNumber);
-        Gson gson = new Gson();
-        return gson.toJson(certificationNumber);
-    }
-
 //    @PostMapping("/sendCertificationNumberPwd")
 //    @ResponseBody
 //    public String sendCertificationNumberPwd() {
 //        String certificationNumber = String.format("%06d", (int) (Math.random() * 1000000));
-//
-//        // JavaMail 설정
-//        Properties properties = new Properties();
-//        properties.put("mail.smtp.starttls.enable", "true");
-//        properties.put("mail.smtp.host", "smtp.gmail.com");
-//        properties.put("mail.smtp.port", "587");
-//        properties.put("mail.smtp.auth", "true"); // 인증 사용
-//
-//        // 구글 계정 정보
-//        String username = "zzzz@gmail.com";
-//        String password = "zzzz";
-//
-//        // 인증 정보
-//        Authenticator authenticator = new Authenticator() {
-//            protected PasswordAuthentication getPasswordAuthentication() {
-//                return new PasswordAuthentication(username, password);
-//            }
-//        };
-//
-//        // 세션 생성
-//        Session session = Session.getInstance(properties, authenticator);
-//
-//        try {
-//            // MimeMessage 생성
-//            MimeMessage message = new MimeMessage(session);
-//            message.setFrom(new InternetAddress("whj1939@gmail.com"));
-//            message.setRecipient(Message.RecipientType.TO, new InternetAddress(SetEmail));
-//            message.setSubject("LOGO마켓 인증번호입니다.");
-//            message.setText("인증번호: " + certificationNumber);
-//
-//            // 이메일 전송
-//            Transport.send(message);
-//
-//            System.out.println("Email sent successfully.");
-//        } catch (MessagingException e) {
-//            e.printStackTrace();
-//            return "Failed to send email.";
-//        }
-//
+//        System.out.println(SetEmail);
+//        System.out.println(certificationNumber);
 //        Gson gson = new Gson();
 //        return gson.toJson(certificationNumber);
 //    }
+
+    @PostMapping("/sendCertificationNumberPwd")
+    @ResponseBody
+    public String sendCertificationNumberPwd() {
+        String certificationNumber = String.format("%06d", (int) (Math.random() * 1000000));
+
+        // JavaMail 설정
+        Properties properties = new Properties();
+        properties.put("mail.smtp.starttls.enable", "true");
+        properties.put("mail.smtp.host", "smtp.gmail.com");
+        properties.put("mail.smtp.port", "587");
+        properties.put("mail.smtp.auth", "true"); // 인증 사용
+
+        // 구글 계정 정보
+        String username = "whj1939@gmail.com";
+        String password = "fgkzeryvfadbmsqi";
+
+        // 인증 정보
+        Authenticator authenticator = new Authenticator() {
+            protected PasswordAuthentication getPasswordAuthentication() {
+                return new PasswordAuthentication(username, password);
+            }
+        };
+
+        // 세션 생성
+        Session session = Session.getInstance(properties, authenticator);
+
+        try {
+            // MimeMessage 생성
+            MimeMessage message = new MimeMessage(session);
+            message.setFrom(new InternetAddress("whj1939@gmail.com"));
+            message.setRecipient(Message.RecipientType.TO, new InternetAddress(SetEmail));
+            message.setSubject("LOGO마켓 인증번호입니다.");
+            message.setText("인증번호: " + certificationNumber);
+
+            // 이메일 전송
+            Transport.send(message);
+
+            System.out.println("Email sent successfully.");
+        } catch (MessagingException e) {
+            e.printStackTrace();
+            return "Failed to send email.";
+        }
+
+        Gson gson = new Gson();
+        return gson.toJson(certificationNumber);
+    }
 
     @GetMapping("/pwdChangeForm")
     public String pwdChangeForm(@RequestParam String id, Model model) {
